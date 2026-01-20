@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { TicketDetail } from "@/types/ticket-detail";
+import Cookies from "js-cookie";
 
 function DetailSkeleton() {
   return (
@@ -98,6 +99,39 @@ export default function TicketDetailPage() {
       month: "long",
       year: "numeric",
     });
+
+  const handleDownloadPDF = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${id}/ticket/pdf`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${Cookies.get("accessToken")}`,
+          },
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error("Gagal download tiket");
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `tiket-${ticket?.ticketCode}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download PDF gagal:", err);
+      alert("Gagal mengunduh tiket.");
+    }
+  };
 
   return (
     <>
@@ -251,7 +285,10 @@ export default function TicketDetailPage() {
                     {new Date(ticket.createdAt).toLocaleString("id-ID")}
                   </p>
 
-                  <Button className="rounded-lg gap-2 bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button
+                    onClick={handleDownloadPDF}
+                    className="rounded-lg gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                  >
                     <Download size={16} />
                     Download Tiket
                   </Button>
