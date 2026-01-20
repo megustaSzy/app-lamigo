@@ -16,7 +16,7 @@ export default function Home() {
         <Hero />
       </section>
 
-      <section>
+      <section id="destination">
         <Destination />
       </section>
 
