@@ -1,0 +1,71 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { apiFetch } from "@/helpers/api";
+import type {
+  AdminOrdersResponse,
+  AdminOrderItem,
+} from "@/types/admin/admin-orders";
+
+import OrdersTable from "@/components/admin/orders/OrdersTable";
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+
+export default function PesananPage() {
+  const [orders, setOrders] = useState<AdminOrderItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  async function getData() {
+    try {
+      setLoading(true);
+      const res = await apiFetch<AdminOrdersResponse>("/api/admin/orders");
+      setOrders(res.data.items ?? []);
+    } catch {
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-semibold text-blue-700 tracking-tight">
+          Manajemen Pesanan
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Daftar pesanan tiket wisata
+        </p>
+      </div>
+
+      <Card className="rounded-2xl shadow-sm">
+        <CardHeader className="border-b">
+          <CardTitle className="text-gray-800">Daftar Pesanan</CardTitle>
+          <CardDescription>Total {orders.length} pesanan</CardDescription>
+        </CardHeader>
+
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+              <p className="text-gray-500">Memuat data...</p>
+            </div>
+          ) : (
+            <OrdersTable orders={orders} />
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
