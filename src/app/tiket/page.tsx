@@ -265,10 +265,8 @@ export default function TiketPage() {
 
           {/* CONTENT AREA */}
           <div className="space-y-4 min-h-[420px]">
-            {/* KONDISI 1: LOADING + BELUM LOGIN */}
             {loading && !isUserLoggedIn && <UnauthSkeleton />}
 
-            {/* KONDISI 2: LOADING + SUDAH LOGIN (Tampilkan Skeleton Card Tiket) */}
             {loading && isUserLoggedIn && (
               <>
                 {Array.from({ length: PAGE_LIMIT }).map((_, i) => (
@@ -277,7 +275,6 @@ export default function TiketPage() {
               </>
             )}
 
-            {/* KONDISI 3: TIDAK LOADING + BELUM LOGIN (UI Asli Unauth) */}
             {!loading && !isUserLoggedIn && (
               <Card className="shadow-sm border-dashed">
                 <CardContent className="p-14 flex flex-col items-center text-center gap-5">
@@ -339,7 +336,6 @@ export default function TiketPage() {
               </Card>
             )}
 
-            {/* KONDISI 5: TIDAK LOADING + SUDAH LOGIN + ADA DATA (UI Asli Tiket) */}
             {!loading &&
               isUserLoggedIn &&
               filtered.map((t) => (
