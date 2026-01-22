@@ -50,10 +50,10 @@ export default function KontenPage() {
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-2xl font-semibold text-blue-700 tracking-tight">
-            Manajemen Konten
+            Manajemen Team
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Kelola konten dan informasinya
+            Kelola team dan informasinya
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export default function KontenPage() {
           setSuccessMsg(
             mode === "add"
               ? "Team berhasil ditambahkan"
-              : "Team berhasil diperbarui"
+              : "Team berhasil diperbarui",
           );
 
           setTimeout(() => setSuccessMsg(null), 2000);
