@@ -11,8 +11,6 @@ import PesanForm from "@/components/pesan/PesanForm";
 import { ConfirmPopup } from "@/components/pesan/ConfirmPopup";
 import { Popup } from "@/components/pesan/Popup";
 
-/* ================= TYPES ================= */
-
 type ApiResponse<T> = {
   status: number;
   message: string;
@@ -41,8 +39,6 @@ type FormValue = {
   people: number;
 };
 
-/* ================= COMPONENT ================= */
-
 export default function PesanComponent() {
   const searchParams = useSearchParams();
   const destinationId = Number(searchParams.get("destinationId"));
@@ -57,15 +53,13 @@ export default function PesanComponent() {
   const [showError, setShowError] = useState(false);
   const [paying, setPaying] = useState(false);
 
-  /* ================= FETCH DESTINATION ================= */
-
   useEffect(() => {
     if (!destinationId) return;
 
     const fetchDestination = async () => {
       try {
         const res = await apiFetch<ApiResponse<DestinationsType>>(
-          `/api/destinations/${destinationId}`
+          `/api/destinations/${destinationId}`,
         );
         setDestination(res.data);
       } catch (err) {
@@ -78,13 +72,11 @@ export default function PesanComponent() {
     fetchDestination();
   }, [destinationId]);
 
-  /* ================= FETCH PICKUP ================= */
-
   useEffect(() => {
     const fetchPickup = async () => {
       try {
         const res = await apiFetch<ApiResponse<PickupType[]>>(
-          "/api/pickup-locations"
+          "/api/pickup-locations",
         );
         setPickupLocations(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
@@ -96,8 +88,6 @@ export default function PesanComponent() {
     fetchPickup();
   }, []);
 
-  /* ================= GUARD ================= */
-
   if (loading) return <p className="text-center mt-20">Loading...</p>;
   if (!destination)
     return <p className="text-center mt-20">Destinasi tidak ditemukan</p>;
@@ -106,8 +96,6 @@ export default function PesanComponent() {
 
   const selectedPickup =
     pickupLocations.find((p) => p.id === formValue?.pickupLocationId) ?? null;
-
-  /* ================= RENDER ================= */
 
   return (
     <main className="min-h-screen bg-neutral-100 flex justify-center px-4 py-8">
@@ -151,14 +139,14 @@ export default function PesanComponent() {
                     departureTime: formValue.departTime,
                     returnTime: formValue.returnTime,
                   }),
-                }
+                },
               );
 
               const payRes = await apiFetch<ApiResponse<PayResponse>>(
                 `/api/orders/${orderRes.data.id}/pay`,
                 {
                   method: "POST",
-                }
+                },
               );
 
               if (payRes.data.redirectUrl) {
