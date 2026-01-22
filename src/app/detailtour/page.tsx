@@ -2,14 +2,14 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { apiFetch } from "@/helpers/api";
 import Image from "next/image";
 import { ApiDestinationsResponse, DestinationsType } from "@/types/destination";
 import { ApiCategoryResponse, CategoryItem } from "@/types/category";
 import DestinationModal from "../components/DestinationModal";
 
-export default function DetailTourPage() {
+function DetailTourContent() {
   const searchParams = useSearchParams();
   const kabupaten = searchParams.get("kabupaten");
 
@@ -20,7 +20,7 @@ export default function DetailTourPage() {
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedData, setSelectedData] = useState<DestinationsType | null>(
-    null
+    null,
   );
 
   /* LOAD CATEGORY */
@@ -163,5 +163,13 @@ export default function DetailTourPage() {
         onClose={() => setOpenModal(false)}
       />
     </section>
+  );
+}
+
+export default function DetailTourPage() {
+  return (
+    <Suspense fallback={<p className="text-center mt-10">Memuat halaman...</p>}>
+      <DetailTourContent />
+    </Suspense>
   );
 }
