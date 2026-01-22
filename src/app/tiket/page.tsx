@@ -23,11 +23,6 @@ import { Ticket } from "@/types/ticket";
 import { OrdersMeResponse } from "@/types/order";
 import Cookies from "js-cookie";
 
-/* =========================================
-   1. SKELETONS (MIRIP DENGAN UI ASLI)
-========================================= */
-
-// Skeleton untuk Card Tiket (Horizontal)
 function TicketItemSkeleton() {
   return (
     <Card className="border-gray-200 shadow-sm">
@@ -80,10 +75,6 @@ function UnauthSkeleton() {
   );
 }
 
-/* =========================================
-   2. MAIN PAGE
-========================================= */
-
 const statusMap: Record<string, Ticket["paymentStatus"]> = {
   "Sudah Dibayar": "paid",
   "Menunggu Konfirmasi": "pending",
@@ -102,18 +93,15 @@ export default function TiketPage() {
   const [totalPages, setTotalPages] = useState(1);
   const PAGE_LIMIT = 5;
 
-  // ✅ FIX HYDRATION: Cek auth di client-side saja
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // ✅ Check authentication setelah component mount
   useEffect(() => {
     setIsMounted(true);
     const token = Cookies.get("accessToken");
     setIsUserLoggedIn(!!token);
   }, []);
 
-  // ✅ Fetch tickets setelah auth check selesai
   useEffect(() => {
     if (!isMounted) return; // Tunggu mount selesai
 
@@ -150,7 +138,6 @@ export default function TiketPage() {
     setPage(1);
   }, [query, statusFilter]);
 
-  // Filtering Client Side (Opsional, tergantung API)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return tickets
@@ -165,8 +152,7 @@ export default function TiketPage() {
           t.destinationName.toLowerCase().includes(q) ||
           t.ticketCode.toLowerCase().includes(q) ||
           t.date.includes(q),
-      )
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      );
   }, [tickets, query, statusFilter]);
 
   const formatDate = (iso: string) =>
@@ -193,7 +179,6 @@ export default function TiketPage() {
     return "Kedaluwarsa";
   };
 
-  // ✅ Tampilkan loading state sebelum hydration selesai
   if (!isMounted) {
     return (
       <>
