@@ -1,13 +1,5 @@
 import Image from "next/image";
-import { ApiDestinationItem } from "@/types/destination";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from "@/components/ui/pagination";
+import { TeamItem } from "@/types/admin/team";
 import {
   Table,
   TableBody,
@@ -19,38 +11,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Pencil,
-  Trash2,
-  Loader2,
-  ImageIcon,
-  Tag,
-  Banknote,
-  MapPin,
-} from "lucide-react";
+import { Pencil, Trash2, Loader2, ImageIcon } from "lucide-react";
 
 type Props = {
-  items: ApiDestinationItem[];
+  items: TeamItem[];
   loading: boolean;
-  page: number;
-  limit: number;
-  totalPages: number;
-  onPageChange: (p: number) => void;
-  onEdit: (item: ApiDestinationItem) => void;
+  onEdit: (item: TeamItem) => void;
   onDelete: (id: number) => void;
 };
 
-export default function DestinasiTable(props: Props) {
-  const {
-    items,
-    loading,
-    page,
-    limit,
-    totalPages,
-    onPageChange,
-    onEdit,
-    onDelete,
-  } = props;
+export default function TeamTable(props: Props) {
+  const { items, loading, onEdit, onDelete } = props;
 
   if (loading) {
     return (
@@ -64,7 +35,7 @@ export default function DestinasiTable(props: Props) {
   if (!items.length) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-gray-500 text-sm">Belum ada destinasi.</p>
+        <p className="text-gray-500 text-sm">Belum ada konten.</p>
       </div>
     );
   }
@@ -81,15 +52,8 @@ export default function DestinasiTable(props: Props) {
               <TableHead className="w-24 text-center font-semibold">
                 Foto
               </TableHead>
-              <TableHead className="text-left font-semibold">Nama</TableHead>
-              <TableHead className="text-left font-semibold">
-                Kategori
-              </TableHead>
-              <TableHead className="text-left font-semibold">
-                Kabupaten
-              </TableHead>
-
-              <TableHead className="text-left font-semibold">Harga</TableHead>
+              <TableHead className="text-center font-semibold">Nama</TableHead>
+              <TableHead className="text-center font-semibold">Job</TableHead>
               <TableHead className="w-40 text-center font-semibold">
                 Aksi
               </TableHead>
@@ -103,9 +67,7 @@ export default function DestinasiTable(props: Props) {
                 className="hover:bg-gray-50/50 transition-colors"
               >
                 <TableCell className="text-center">
-                  <Badge variant="outline" className="font-normal">
-                    {(page - 1) * limit + i + 1}
-                  </Badge>
+                  <Badge variant="outline">{i + 1}</Badge>
                 </TableCell>
 
                 <TableCell className="text-center">
@@ -123,30 +85,12 @@ export default function DestinasiTable(props: Props) {
                   </div>
                 </TableCell>
 
-                <TableCell className="font-medium text-gray-900">
+                <TableCell className="text-center font-medium text-gray-900">
                   {it.name}
                 </TableCell>
 
-                <TableCell className="text-gray-600">
-                  <Badge variant="secondary" className="gap-1">
-                    <Tag className="h-3 w-3" />
-                    {it.category.name}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-gray-600">
-                  <Badge variant="outline" className="gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {it.region.name}
-                  </Badge>
-                </TableCell>
-
-                <TableCell className="text-gray-900">
-                  <div className="flex items-center gap-1.5">
-                    <Banknote className="h-3.5 w-3.5 text-green-600" />
-                    <span className="font-medium">
-                      Rp {it.price.toLocaleString("id-ID")}
-                    </span>
-                  </div>
+                <TableCell className="text-center text-gray-600">
+                  {it.job}
                 </TableCell>
 
                 <TableCell>
@@ -177,48 +121,6 @@ export default function DestinasiTable(props: Props) {
           </TableBody>
         </Table>
       </div>
-
-      {totalPages > 1 && (
-        <div className="border-t py-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => page > 1 && onPageChange(page - 1)}
-                  className={
-                    page === 1
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }).map((_, i) => (
-                <PaginationItem key={i}>
-                  <PaginationLink
-                    isActive={page === i + 1}
-                    onClick={() => onPageChange(i + 1)}
-                    className="cursor-pointer"
-                  >
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => page < totalPages && onPageChange(page + 1)}
-                  className={
-                    page === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
     </>
   );
 }

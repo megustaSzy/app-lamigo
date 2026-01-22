@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertTriangle, Loader2 } from "lucide-react";
 
-export default function DestinasiDeleteModal({
+export default function TeamDeleteModal({
   id,
   onClose,
   onSuccess,
@@ -28,7 +28,7 @@ export default function DestinasiDeleteModal({
 
     setLoading(true);
     try {
-      await apiFetch(`/api/destinations/${id}`, { method: "DELETE" });
+      await apiFetch(`/api/team/${id}`, { method: "DELETE" });
       onClose();
       onSuccess();
     } finally {
@@ -49,7 +49,7 @@ export default function DestinasiDeleteModal({
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-base">
-            Yakin ingin menghapus destinasi ini? Tindakan ini tidak dapat
+            Yakin ingin menghapus team ini? Tindakan ini tidak dapat
             dibatalkan dan semua data terkait akan dihapus permanen.
           </AlertDialogDescription>
         </AlertDialogHeader>
