@@ -72,7 +72,7 @@ export default function TeamFormModal({
       const fd = new FormData();
 
       fd.append("name", name);
-      fd.append("header", job);
+      fd.append("job", job);
       if (image) {
         fd.append("image", image);
       }
