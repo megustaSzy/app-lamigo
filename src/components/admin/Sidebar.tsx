@@ -14,6 +14,7 @@ import {
   Image,
   CalendarHeart,
   FunnelPlus,
+  PiggyBank,
 } from "lucide-react";
 
 export default function Sidebar({ isOpen }: { isOpen: boolean }) {
@@ -75,6 +76,11 @@ export default function Sidebar({ isOpen }: { isOpen: boolean }) {
       title: "Pengelola Value",
       href: "/admin/value",
       icon: <CalendarHeart size={16} />,
+    },
+    {
+      title: "Team",
+      href: "/admin/team",
+      icon: <PiggyBank size={16} />,
     },
   ];
 
