@@ -75,11 +75,13 @@ export default function TicketDetailPage() {
   const [ticket, setTicket] = useState<TicketDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const decodedId = atob(decodeURIComponent(id as string));
+
   useEffect(() => {
     const fetchDetail = async () => {
       try {
         const res = await apiFetch<{ data: TicketDetail }>(
-          `/api/orders/${id}/ticket`,
+          `/api/orders/${decodedId}/ticket`,
         );
         setTicket(res.data);
       } catch (err) {
@@ -103,7 +105,7 @@ export default function TicketDetailPage() {
   const handleDownloadPDF = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${id}/ticket/pdf`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${decodedId}/ticket/pdf`,
         {
           method: "GET",
           headers: {

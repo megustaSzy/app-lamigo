@@ -1,16 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Calendar, Clock, User, ChevronDown } from "lucide-react";
+import { MapPin, Calendar, Clock, User } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar as CalendarShadcn } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
 
 type PickupType = {
   id: number;
@@ -55,9 +60,26 @@ export default function PesanForm({
 
   const estimasiTotal = price * people;
 
-  /* ===============================
-      HELPER JAM
-  =============================== */
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    const months = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  };
+
   const departTimes = Array.from({ length: 8 }, (_, i) => {
     const hour = 7 + i;
     return `${hour.toString().padStart(2, "0")}:00`;
@@ -68,9 +90,6 @@ export default function PesanForm({
     return `${hour.toString().padStart(2, "0")}:00`;
   });
 
-  /* ===============================
-      SUBMIT
-  =============================== */
   const handleSubmit = () => {
     const newErrors: Errors = {};
 
@@ -103,32 +122,28 @@ export default function PesanForm({
         {/* LOKASI */}
         <Label>Lokasi Penjemputan</Label>
         <Field error={!!errors.pickupLocationId} icon={<MapPin size={14} />}>
-          <div className="relative">
-            <select
-              value={pickupLocationId ?? ""}
-              onChange={(e) => {
-                setPickupLocationId(
-                  e.target.value ? Number(e.target.value) : null
-                );
-                setErrors((prev) => ({ ...prev, pickupLocationId: undefined }));
-              }}
-              className="w-full h-7 pr-6 bg-transparent outline-none
-                text-xs text-neutral-700 appearance-none"
-            >
-              <option value="">Pilih Lokasi</option>
+          <Select
+            value={pickupLocationId?.toString() ?? ""}
+            onValueChange={(val) => {
+              setPickupLocationId(val ? Number(val) : null);
+              setErrors((prev) => ({ ...prev, pickupLocationId: undefined }));
+            }}
+          >
+            <SelectTrigger className="h-7 border-0 p-0 text-xs font-medium text-neutral-500 focus:ring-0 focus:ring-offset-0">
+              <SelectValue placeholder="Pilih Lokasi" />
+            </SelectTrigger>
+            <SelectContent>
               {pickupLocations.map((loc) => (
-                <option key={loc.id} value={loc.id}>
+                <SelectItem
+                  key={loc.id}
+                  value={loc.id.toString()}
+                  className="text-sm"
+                >
                   {loc.name}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-
-            <ChevronDown
-              size={14}
-              className="absolute right-1 top-1/2 -translate-y-1/2
-                text-neutral-400 pointer-events-none"
-            />
-          </div>
+            </SelectContent>
+          </Select>
         </Field>
         {errors.pickupLocationId && (
           <ErrorText>{errors.pickupLocationId}</ErrorText>
@@ -142,12 +157,14 @@ export default function PesanForm({
               <Button
                 variant="ghost"
                 className="h-7 w-full justify-start px-0 py-0
-                  font-normal text-xs text-neutral-700
+                  font-medium text-xs text-neutral-700
                   hover:bg-transparent hover:text-blue-600"
               >
-                {date
-                  ? format(new Date(date), "dd MMMM yyyy", { locale: id })
-                  : "Pilih tanggal"}
+                {date ? (
+                  formatDate(date)
+                ) : (
+                  <span className="text-neutral-500">Pilih tanggal</span>
+                )}
               </Button>
             </PopoverTrigger>
 
@@ -160,7 +177,10 @@ export default function PesanForm({
                 selected={date ? new Date(date) : undefined}
                 onSelect={(d) => {
                   if (d) {
-                    setDate(format(d, "yyyy-MM-dd"));
+                    const year = d.getFullYear();
+                    const month = String(d.getMonth() + 1).padStart(2, "0");
+                    const day = String(d.getDate()).padStart(2, "0");
+                    setDate(`${year}-${month}-${day}`);
                     setOpenCalendar(false);
                     setErrors((prev) => ({ ...prev, date: undefined }));
                   }
@@ -180,10 +200,12 @@ export default function PesanForm({
               <Button
                 variant="ghost"
                 className="h-7 w-full justify-start px-0 py-0
-                  font-normal text-xs text-neutral-700
+                  font-medium text-xs text-neutral-700
                   hover:bg-transparent hover:text-blue-600"
               >
-                {departTime || "Pilih jam"}
+                {departTime || (
+                  <span className="text-neutral-500">Pilih jam</span>
+                )}
               </Button>
             </PopoverTrigger>
 
@@ -224,10 +246,12 @@ export default function PesanForm({
               <Button
                 variant="ghost"
                 className="h-7 w-full justify-start px-0 py-0
-                  font-normal text-xs text-neutral-700
+                  font-medium text-xs text-neutral-700
                   hover:bg-transparent hover:text-blue-600"
               >
-                {returnTime || "Pilih jam"}
+                {returnTime || (
+                  <span className="text-neutral-500">Pilih jam</span>
+                )}
               </Button>
             </PopoverTrigger>
 
@@ -287,7 +311,7 @@ export default function PesanForm({
       <button
         onClick={handleSubmit}
         className="w-full flex justify-between items-center
-          bg-linear-to-r from-blue-600 to-blue-500
+          bg-gradient-to-r from-blue-600 to-blue-500
           hover:from-blue-700 hover:to-blue-600
           text-white py-3 px-5 rounded-2xl text-sm font-semibold
           shadow-md hover:shadow-lg transition-all"
@@ -299,13 +323,9 @@ export default function PesanForm({
   );
 }
 
-/* ===============================
-    HELPERS
-=============================== */
-
 function Label({ children }: { children: string }) {
   return (
-    <p className="text-xs font-medium text-neutral-600 tracking-wide">
+    <p className="text-xs font-semibold text-neutral-700 tracking-wide uppercase">
       {children}
     </p>
   );

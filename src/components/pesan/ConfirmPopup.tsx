@@ -1,4 +1,6 @@
+import { MapPin, Calendar, Clock, Users, CreditCard, X } from "lucide-react";
 import { DestinationsType } from "@/types/destination";
+import { Button } from "../ui/button";
 
 export function ConfirmPopup({
   destination,
@@ -24,61 +26,109 @@ export function ConfirmPopup({
   onConfirm: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      {" "}
-      <div className="w-full max-w-sm bg-white rounded-2xl p-6 space-y-4">
-        {" "}
-        <h3 className="text-lg font-semibold text-center">
-          {" "}
-          Konfirmasi Pesanan{" "}
-        </h3>{" "}
-        <div className="text-sm space-y-2 text-neutral-600">
-          {" "}
-          <p>
-            {" "}
-            <b>Destinasi:</b> {destination.name}{" "}
-          </p>{" "}
-          <p>
-            {" "}
-            <b>Pickup:</b> {pickupName}{" "}
-          </p>{" "}
-          <p>
-            {" "}
-            <b>Tanggal:</b> {date}{" "}
-          </p>{" "}
-          <p>
-            {" "}
-            <b>Waktu:</b> {departTime} - {returnTime}{" "}
-          </p>{" "}
-          <p>
-            {" "}
-            <b>Jumlah:</b> {people} orang{" "}
-          </p>{" "}
-        </div>{" "}
-        <div className="flex justify-between font-semibold">
-          {" "}
-          <span>Estimasi Total</span>{" "}
-          <span>IDR {estimasiTotal.toLocaleString("id-ID")}</span>{" "}
-        </div>{" "}
-        <div className="flex gap-3 pt-2">
-          {" "}
-          <button
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div className="w-full max-w-sm overflow-hidden rounded-3xl bg-white shadow-xl">
+        {/* HEADER */}
+        <div className="relative bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 text-white">
+          <h3 className="text-center text-base font-semibold">
+            Konfirmasi Pesanan
+          </h3>
+
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onCancel}
-            className="w-full py-2 rounded-xl border text-sm"
+            className="absolute right-3 top-3 text-white/80 hover:bg-white/20 hover:text-white"
           >
-            {" "}
-            Batal{" "}
-          </button>{" "}
-          <button
+            <X size={18} />
+          </Button>
+        </div>
+
+        {/* CONTENT */}
+        <div className="space-y-4 px-6 py-5 text-sm">
+          <InfoRow
+            icon={<MapPin size={14} />}
+            label="Destinasi"
+            value={destination.name}
+          />
+
+          <InfoRow
+            icon={<MapPin size={14} />}
+            label="Pickup"
+            value={pickupName}
+          />
+
+          <InfoRow icon={<Calendar size={14} />} label="Tanggal" value={date} />
+
+          <InfoRow
+            icon={<Clock size={14} />}
+            label="Waktu"
+            value={`${departTime} – ${returnTime}`}
+          />
+
+          <InfoRow
+            icon={<Users size={14} />}
+            label="Jumlah"
+            value={`${people} orang`}
+          />
+
+          {/* TOTAL */}
+          <div className="mt-3 flex items-center justify-between rounded-2xl bg-blue-50 px-4 py-3">
+            <div className="flex items-center gap-2 font-medium text-blue-600">
+              <CreditCard size={16} />
+              <span>Estimasi Total</span>
+            </div>
+            <span className="font-semibold text-blue-700">
+              IDR {estimasiTotal.toLocaleString("id-ID")}
+            </span>
+          </div>
+        </div>
+
+        {/* ACTION */}
+        <div className="px-6 pb-6 flex justify-center gap-3">
+          <Button
+            variant="outline"
+            onClick={onCancel}
             disabled={paying}
-            onClick={onConfirm}
-            className="w-full py-2 rounded-xl bg-blue-600 text-white text-sm disabled:opacity-60"
+            className="flex-1 max-w-[200px] rounded-xl border border-neutral-200 py-2.5 text-sm font-medium
+      hover:bg-neutral-50 disabled:opacity-50"
           >
-            {" "}
-            {paying ? "Memproses..." : "Pesan Sekarang"}{" "}
-          </button>{" "}
-        </div>{" "}
-      </div>{" "}
+            Batal
+          </Button>
+
+          <Button
+            onClick={onConfirm}
+            disabled={paying}
+            className="flex-1 max-w-[200px] rounded-xl bg-gradient-to-r from-blue-600 to-blue-500
+      hover:from-blue-700 hover:to-blue-600
+      text-white py-2.5 text-sm font-semibold
+      shadow-md hover:shadow-lg transition-all
+      disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {paying ? "Memproses..." : "Pesan Sekarang"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="mt-0.5 text-neutral-400">{icon}</span>
+      <div className="flex-1">
+        <p className="text-xs text-neutral-500">{label}</p>
+        <p className="font-medium text-neutral-800">{value}</p>
+      </div>
     </div>
   );
 }

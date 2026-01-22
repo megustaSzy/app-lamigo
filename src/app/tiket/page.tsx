@@ -323,49 +323,53 @@ export default function TiketPage() {
 
             {!loading &&
               isUserLoggedIn &&
-              filtered.map((t) => (
-                <Card
-                  key={t.id}
-                  className="border-gray-200 transition-all duration-200 hover:border-blue-400 hover:shadow-md"
-                >
-                  <CardContent className="p-4 flex justify-between items-center">
-                    {/* KIRI */}
-                    <div>
-                      <h2 className="text-base font-semibold text-gray-900">
-                        {t.destinationName}
-                      </h2>
-                      <p className="text-xs text-gray-500">
-                        {formatDate(t.date)} • Kode{" "}
-                        <span className="font-medium text-gray-700">
-                          {t.ticketCode}
-                        </span>
-                      </p>
-                    </div>
+              filtered.map((t) => {
+                const encodedId = encodeURIComponent(btoa(String(t.id)));
 
-                    {/* KANAN */}
-                    <div className="flex items-center gap-3">
-                      <Badge
-                        variant="secondary"
-                        className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge(
-                          t.paymentStatus,
-                        )}`}
-                      >
-                        {statusLabel(t.paymentStatus)}
-                      </Badge>
+                return (
+                  <Card
+                    key={t.id}
+                    className="border-gray-200 transition-all duration-200 hover:border-blue-400 hover:shadow-md"
+                  >
+                    <CardContent className="p-4 flex justify-between items-center">
+                      {/* KIRI */}
+                      <div>
+                        <h2 className="text-base font-semibold text-gray-900">
+                          {t.destinationName}
+                        </h2>
+                        <p className="text-xs text-gray-500">
+                          {formatDate(t.date)} • Kode{" "}
+                          <span className="font-medium text-gray-700">
+                            {t.ticketCode}
+                          </span>
+                        </p>
+                      </div>
 
-                      <Link href={`/tiket/${t.id}`}>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-xl"
+                      {/* KANAN */}
+                      <div className="flex items-center gap-3">
+                        <Badge
+                          variant="secondary"
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge(
+                            t.paymentStatus,
+                          )}`}
                         >
-                          Lihat
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                          {statusLabel(t.paymentStatus)}
+                        </Badge>
+
+                        <Link href={`/tiket/${encodedId}`}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-xl"
+                          >
+                            Lihat
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
           </div>
 
           {/* PAGINATION (Hanya muncul jika user login, tidak loading, dan ada banyak data) */}
