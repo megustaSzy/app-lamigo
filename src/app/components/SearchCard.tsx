@@ -53,27 +53,69 @@ export default function SearchCard() {
       async (pos) => {
         try {
           const { latitude, longitude } = pos.coords;
+          const googleKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+          // -------------------------------------------
+          // OPSI 1: GOOGLE MAPS API (Jika Key Ada)
+          // -------------------------------------------
+          if (googleKey) {
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${googleKey}&language=id`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.status === "OK" && data.results?.length > 0) {
+              // Ambil alamat terformat dari Google (biasanya sangat akurat)
+              setLocation(data.results[0].formatted_address);
+              return;
+            }
+          }
+
+          // -------------------------------------------
+          // OPSI 2: OPENSTREETMAP (Enhanced - Gratis)
+          // -------------------------------------------
+          // zoom=18: Level bangunan/jalan
+          // addressdetails=1: Minta detail jalan, nomor, dll
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
           );
           const data: ReverseGeocodeResponse = await res.json();
 
-          const kecamatan =
-            data.address?.city_district ||
-            data.address?.suburb ||
-            data.address?.village ||
-            "Lokasi tidak diketahui";
+          const addr = data.address || {};
 
-          const kabupaten = data.address?.county || data.address?.city || "";
-          const provinsi = data.address?.state || "";
+          // Prioritas data jalan & nomor
+          const street = addr.road || addr.pedestrian || "";
+          const number = addr.house_number ? `No. ${addr.house_number}` : "";
+          const venue = addr.amenity || addr.building || ""; // Nama gedung/tempat
 
-          setLocation(
-            `${kecamatan}${kabupaten ? ", " + kabupaten : ""}${
-              provinsi ? ", " + provinsi : ""
-            }`
+          // Wilayah
+          const district =
+            addr.city_district ||
+            addr.suburb ||
+            addr.village ||
+            addr.neighbourhood ||
+            "";
+          const city = addr.city || addr.town || addr.county || "";
+          const state = addr.state || "";
+
+          // Susun string alamat yang indah
+          // Format: "Nama Gedung, Jl. Baru No. 10, Kecamatan, Kota"
+          const firstPart = [venue, [street, number].filter(Boolean).join(" ")]
+            .filter(Boolean)
+            .join(", ");
+
+          const addressParts = [firstPart, district, city, state].filter(
+            (s) => s && s.trim().length > 0
           );
-        } catch {
-          setLocation("Gagal mendeteksi lokasi");
+
+          if (addressParts.length > 0) {
+            setLocation(addressParts.join(", "));
+          } else {
+            // Fallback jika parsing gagal
+            setLocation(data.display_name || "Lokasi ditemukan");
+          }
+        } catch (err) {
+          console.error("Geocoding error:", err);
+          setLocation("Gagal mendeteksi lokasi (Coba refresh)");
         }
       },
       () => setLocation("Izin lokasi ditolak")

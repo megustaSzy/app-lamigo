@@ -17,26 +17,37 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import Pagination from "@/components/Pagination";
 
 export default function PesananPage() {
   const [orders, setOrders] = useState<AdminOrderItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function getData() {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const limit = 10;
+
+  async function getData(currentPage: number) {
     try {
       setLoading(true);
-      const res = await apiFetch<AdminOrdersResponse>("/api/admin/orders");
+      const res = await apiFetch<AdminOrdersResponse>(
+        `/api/admin/orders?page=${currentPage}&limit=${limit}`,
+      );
+
       setOrders(res.data.items ?? []);
+      setTotalPages(res.data.total_pages ?? 1);
     } catch {
       setOrders([]);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData(page);
+  }, [page]);
 
   return (
     <div className="space-y-6">
@@ -62,7 +73,15 @@ export default function PesananPage() {
               <p className="text-gray-500">Memuat data...</p>
             </div>
           ) : (
-            <OrdersTable orders={orders} />
+            <div className="space-y-4">
+              <OrdersTable orders={orders} />
+
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            </div>
           )}
         </CardContent>
       </Card>
