@@ -1,40 +1,27 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Cookies from "js-cookie";
-import { CheckCircle2, Upload } from "lucide-react";
+import { CheckCircle2, Loader2, User, Camera } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
-
-type ApiProfileResponse = {
-  status: number;
-  message: string;
-  data: {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    avatar?: string | null;
-  };
-};
 
 type UserProfile = {
   id: number;
   name: string;
   email: string;
+  notelp: string;
   role: string;
   avatar: string;
 };
@@ -46,6 +33,7 @@ export default function ProfilePage() {
     id: 0,
     name: "",
     email: "",
+    notelp: "",
     role: "",
     avatar: "/images/default-avatar.png",
   });
@@ -53,7 +41,7 @@ export default function ProfilePage() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [openSuccess, setOpenSuccess] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const buildAvatarUrl = useCallback(
     (avatar?: string | null) =>
@@ -62,143 +50,198 @@ export default function ProfilePage() {
           ? avatar
           : `${API_URL}${avatar}`
         : "/images/default-avatar.png",
-    [API_URL]
+    [API_URL],
   );
 
-  // ✅ Dibungkus useCallback
   const fetchProfile = useCallback(async () => {
     const token = Cookies.get("accessToken");
     if (!token) return;
 
-    try {
-      const res = await fetch(`${API_URL}/api/users/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const res = await fetch(`${API_URL}/api/users/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      if (!res.ok) return;
+    if (!res.ok) return;
 
-      const result: ApiProfileResponse = await res.json();
-
-      setUser({
-        id: result.data.id,
-        name: result.data.name,
-        email: result.data.email,
-        role: result.data.role,
-        avatar: buildAvatarUrl(result.data.avatar),
-      });
-    } catch (error) {
-      console.error("FETCH PROFILE ERROR:", error);
-    }
+    const json = await res.json();
+    setUser({
+      id: json.data.id,
+      name: json.data.name ?? "",
+      email: json.data.email ?? "",
+      notelp: json.data.notelp ?? "",
+      role: json.data.role ?? "",
+      avatar: buildAvatarUrl(json.data.avatar),
+    });
   }, [API_URL, buildAvatarUrl]);
 
   const updateProfile = async () => {
     setSaving(true);
     const token = Cookies.get("accessToken");
+    if (!token) return;
 
     const formData = new FormData();
-    formData.append("name", user.name);
+    if (user.name) formData.append("name", user.name);
+    if (user.notelp) formData.append("notelp", user.notelp);
     if (file) formData.append("avatar", file);
 
     try {
-      await fetch(`${API_URL}/api/users/${user.id}`, {
+      const res = await fetch(`${API_URL}/api/users/${user.id}`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
-      setOpenSuccess(true);
-    } catch (error) {
-      console.error("UPDATE PROFILE ERROR:", error);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Gagal update profile");
+      }
+
+      setSuccess(true);
+      setFile(null);
+      setPreview(null);
+      fetchProfile();
+    } catch (err: any) {
+      alert(err.message);
     } finally {
       setSaving(false);
     }
   };
+
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
   return (
     <>
-      <div className="min-h-screen bg-muted/40 px-4 py-10">
-        <Card className="mx-auto max-w-lg rounded-2xl border shadow-sm">
-          <CardContent className="space-y-6 p-6">
-            {/* ===== HEADER ===== */}
-            <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={preview ?? user.avatar} />
-                <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
-              </Avatar>
+      <div className="min-h-screen bg-gray-50 px-4 py-8 md:py-12">
+        <div className="mx-auto max-w-5xl space-y-8">
+          {/* HEADER */}
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-blue-600">
+              Profile Saya
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Kelola informasi akun dan foto profil
+            </p>
+          </div>
 
-              <div className="flex-1">
-                <p className="font-medium leading-tight">
-                  {user.name || "Nama Pengguna"}
-                </p>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
+          {/* MAIN CONTENT */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* LEFT – PROFILE CARD */}
+            <Card className="md:col-span-1">
+              <CardContent className="p-6 flex flex-col items-center text-center gap-4">
+                <div className="relative group">
+                  <Avatar className="h-28 w-28 border shadow-sm">
+                    <AvatarImage src={preview || user.avatar} />
+                    <AvatarFallback className="text-2xl">
+                      {user.name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
 
-                <Label className="mt-1 inline-flex cursor-pointer items-center gap-1 text-xs  text-blue-500">
-                  <Upload className="h-3.5 w-3.5" />
-                  Ubah foto
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (!f) return;
-                      setFile(f);
-                      setPreview(URL.createObjectURL(f));
-                    }}
-                  />
-                </Label>
-              </div>
-            </div>
+                  <Label className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition">
+                    <Camera className="text-white" />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (!f) return;
+                        setFile(f);
+                        setPreview(URL.createObjectURL(f));
+                      }}
+                    />
+                  </Label>
+                </div>
 
-            <Separator />
+                <div>
+                  <h2 className="text-lg font-semibold">{user.name}</h2>
+                  <p className="text-sm text-gray-500">{user.email}</p>
+                </div>
 
-            {/* ===== FORM ===== */}
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <Label className="text-sm">Nama</Label>
-                <Input
-                  value={user.name}
-                  onChange={(e) => setUser({ ...user, name: e.target.value })}
-                />
-              </div>
+                <span className="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-600 font-medium">
+                  {user.role}
+                </span>
+              </CardContent>
+            </Card>
 
-              <div className="space-y-1.5">
-                <Label className="text-sm">Email</Label>
-                <Input value={user.email} disabled />
-              </div>
-            </div>
+            {/* RIGHT – FORM */}
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <h3 className="font-semibold flex items-center gap-2">
+                  <User size={18} />
+                  Informasi Pribadi
+                </h3>
+              </CardHeader>
 
-            <Separator />
+              <CardContent className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Nama</Label>
+                    <Input
+                      value={user.name}
+                      onChange={(e) =>
+                        setUser({ ...user, name: e.target.value })
+                      }
+                    />
+                  </div>
 
-            {/* ===== ACTION ===== */}
-            <Button
-              onClick={updateProfile}
-              disabled={saving}
-              className="w-full bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-600 cursor-pointer"
-            >
-              {saving ? "Menyimpan..." : "Simpan Perubahan"}
-            </Button>
-          </CardContent>
-        </Card>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input value={user.email} disabled />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>No. Telepon</Label>
+                    <Input
+                      value={user.notelp}
+                      onChange={(e) =>
+                        setUser({ ...user, notelp: e.target.value })
+                      }
+                      placeholder="08xxxxxxxxxx"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <Button
+                    onClick={updateProfile}
+                    disabled={saving}
+                    className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="mr-2 animate-spin" />
+                        Menyimpan...
+                      </>
+                    ) : (
+                      "Simpan Perubahan"
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
 
       {/* SUCCESS DIALOG */}
-      <Dialog open={openSuccess} onOpenChange={setOpenSuccess}>
-        <DialogContent className="rounded-2xl">
-          <div className="flex flex-col items-center gap-4 py-6 text-center">
-            <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+      <Dialog open={success} onOpenChange={setSuccess}>
+        <DialogContent>
+          <div className="text-center space-y-4 py-6">
+            <CheckCircle2 className="mx-auto text-green-500" size={48} />
             <DialogHeader>
-              <DialogTitle>Profil Berhasil Diperbarui</DialogTitle>
-              <DialogDescription>
-                Perubahan profil kamu telah disimpan.
-              </DialogDescription>
+              <DialogTitle>Berhasil</DialogTitle>
+              <DialogDescription>Profil berhasil diperbarui</DialogDescription>
             </DialogHeader>
-            <DialogFooter>
-              <Button onClick={() => setOpenSuccess(false)}>Tutup</Button>
-            </DialogFooter>
+            <Button
+              onClick={() => setSuccess(false)}
+              className="bg-blue-600 text-white"
+            >
+              Tutup
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
