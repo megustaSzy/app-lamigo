@@ -8,7 +8,7 @@ export function ConfirmPopup({
   date,
   departTime,
   returnTime,
-  people,
+  quantity,
   estimasiTotal,
   paying,
   onCancel,
@@ -19,7 +19,7 @@ export function ConfirmPopup({
   date: string;
   departTime: string;
   returnTime: string;
-  people: number;
+  quantity: number;
   estimasiTotal: number;
   paying: boolean;
   onCancel: () => void;
@@ -69,7 +69,7 @@ export function ConfirmPopup({
           <InfoRow
             icon={<Users size={14} />}
             label="Jumlah"
-            value={`${people} orang`}
+            value={`${quantity} orang`}
           />
 
           {/* TOTAL */}

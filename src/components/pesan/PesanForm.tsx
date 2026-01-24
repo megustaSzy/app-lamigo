@@ -27,7 +27,7 @@ type FormValue = {
   date: string;
   departTime: string;
   returnTime: string;
-  people: number;
+  quantity: number;
 };
 
 type Errors = {
@@ -50,7 +50,7 @@ export default function PesanForm({
   const [date, setDate] = useState("");
   const [departTime, setDepartTime] = useState("");
   const [returnTime, setReturnTime] = useState("");
-  const [people, setPeople] = useState(1);
+  const [quantity, setQuantity] = useState(1);
 
   const [openCalendar, setOpenCalendar] = useState(false);
   const [openDepart, setOpenDepart] = useState(false);
@@ -58,7 +58,7 @@ export default function PesanForm({
 
   const [errors, setErrors] = useState<Errors>({});
 
-  const estimasiTotal = price * people;
+  const estimasiTotal = price * quantity;
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "";
@@ -93,9 +93,6 @@ export default function PesanForm({
   const handleSubmit = () => {
     const newErrors: Errors = {};
 
-    if (!pickupLocationId)
-      newErrors.pickupLocationId = "Lokasi penjemputan wajib dipilih";
-
     if (!date) newErrors.date = "Tanggal keberangkatan wajib dipilih";
 
     if (!departTime) newErrors.departTime = "Waktu berangkat wajib dipilih";
@@ -111,7 +108,7 @@ export default function PesanForm({
       date,
       departTime,
       returnTime,
-      people,
+      quantity,
     });
   };
 
@@ -289,15 +286,17 @@ export default function PesanForm({
         <Field icon={<User size={16} />}>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setPeople((p) => Math.max(1, p - 1))}
+              onClick={() => setQuantity((p) => Math.max(1, p - 1))}
               className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100
                 text-sm font-bold transition"
             >
               −
             </button>
-            <span className="min-w-5 text-center font-semibold">{people}</span>
+            <span className="min-w-5 text-center font-semibold">
+              {quantity}
+            </span>
             <button
-              onClick={() => setPeople((p) => Math.min(16, p + 1))}
+              onClick={() => setQuantity((p) => Math.min(16, p + 1))}
               className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100
                 text-sm font-bold transition"
             >

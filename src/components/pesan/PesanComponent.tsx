@@ -36,7 +36,7 @@ type FormValue = {
   date: string;
   departTime: string;
   returnTime: string;
-  people: number;
+  quantity: number;
 };
 
 export default function PesanComponent() {
@@ -92,7 +92,7 @@ export default function PesanComponent() {
   if (!destination)
     return <p className="text-center mt-20">Destinasi tidak ditemukan</p>;
 
-  const estimasiTotal = destination.price * (formValue?.people ?? 1);
+  const estimasiTotal = destination.price * (formValue?.quantity ?? 1);
 
   const selectedPickup =
     pickupLocations.find((p) => p.id === formValue?.pickupLocationId) ?? null;
@@ -119,7 +119,7 @@ export default function PesanComponent() {
           date={formValue.date}
           departTime={formValue.departTime}
           returnTime={formValue.returnTime}
-          people={formValue.people}
+          quantity={formValue.quantity}
           estimasiTotal={estimasiTotal}
           paying={paying}
           onCancel={() => setShowConfirm(false)}
@@ -134,7 +134,7 @@ export default function PesanComponent() {
                   body: JSON.stringify({
                     destinationId: destination.id,
                     pickupLocationId: formValue.pickupLocationId,
-                    quantity: formValue.people,
+                    quantity: formValue.quantity,
                     date: formValue.date,
                     departureTime: formValue.departTime,
                     returnTime: formValue.returnTime,
