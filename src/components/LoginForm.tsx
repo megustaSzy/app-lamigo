@@ -1,10 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle, XCircle, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FcGoogle } from "react-icons/fc";
 import {
   Card,
   CardContent,
@@ -12,13 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, XCircle, Eye, EyeOff, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-
 import { loginSchema } from "@/schema/loginSchema";
 
 function AuthModal({
@@ -77,13 +76,13 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const router = useRouter();
 
+  // State Management
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalStatus, setModalStatus] = useState<"success" | "error" | null>(
-    null
+    null,
   );
   const [modalMessage, setModalMessage] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -134,6 +133,7 @@ export function LoginForm({
     const accessToken = params.get("accessToken");
     const refreshToken = params.get("refreshToken");
 
+    // Handle direct token callback
     if (accessToken && refreshToken) {
       setCookie("accessToken", accessToken);
       setCookie("refreshToken", refreshToken);
@@ -151,11 +151,12 @@ export function LoginForm({
       return;
     }
 
+    // Handle Google OAuth code callback
     if (code) {
       (async () => {
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google/callback?code=${code}`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google/callback?code=${code}`,
           );
           const data = await res.json();
 
@@ -221,7 +222,7 @@ export function LoginForm({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(result.data),
-        }
+        },
       );
 
       const data = await response.json();
@@ -264,23 +265,20 @@ export function LoginForm({
       <section
         className={cn(
           "flex flex-col items-center justify-center min-h-screen px-4",
-          className
+          className,
         )}
         {...props}
       >
         <Card className="w-full max-w-md shadow-lg border border-gray-100 rounded-2xl bg-white/80 backdrop-blur">
+          {/* Header */}
           <CardHeader className="text-center pb-2 flex flex-col items-center">
             <Link
               href="/"
               aria-label="Kembali ke beranda"
-              className="absolute left-6 top-6 flex items-center gap-1 text-blue-600
-             hover:text-blue-700 transition-all duration-200
-             hover:-translate-x-0.5"
+              className="absolute left-6 top-6 flex items-center gap-1 text-blue-600 hover:text-blue-700 transition-all duration-200 hover:-translate-x-0.5"
             >
               <ArrowLeft size={22} />
-              <span className="text-sm font-medium hidden sm:inline">
-                Home
-              </span>
+              <span className="text-sm font-medium hidden sm:inline">Home</span>
             </Link>
 
             <Image
@@ -290,16 +288,20 @@ export function LoginForm({
               height={61}
               className="w-16 h-16 object-contain mb-3"
             />
+
             <CardTitle className="text-2xl font-bold text-gray-800">
               Login Akun
             </CardTitle>
+
             <CardDescription className="text-gray-500">
               Masuk ke akun kamu untuk melanjutkan
             </CardDescription>
           </CardHeader>
 
+          {/* Content */}
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-5">
+              {/* Email Field */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email
@@ -315,6 +317,7 @@ export function LoginForm({
                 )}
               </div>
 
+              {/* Password Field */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Password
@@ -348,6 +351,7 @@ export function LoginForm({
                 )}
               </div>
 
+              {/* Login Button */}
               <Button
                 type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white"
@@ -356,6 +360,7 @@ export function LoginForm({
                 {loading ? "Sedang masuk..." : "Login"}
               </Button>
 
+              {/* Divider */}
               <div className="relative">
                 <hr />
                 <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-white px-2 text-gray-400 text-sm">
@@ -363,6 +368,7 @@ export function LoginForm({
                 </span>
               </div>
 
+              {/* Google Login Button */}
               <Button
                 variant="outline"
                 type="button"
@@ -373,6 +379,7 @@ export function LoginForm({
                 Login dengan Google
               </Button>
 
+              {/* Sign Up Link */}
               <p className="text-center text-sm text-gray-500">
                 Belum punya akun?{" "}
                 <Link href="/signup" className="text-blue-600 hover:underline">
@@ -384,6 +391,7 @@ export function LoginForm({
         </Card>
       </section>
 
+      {/* Modal */}
       <AuthModal open={modalOpen} status={modalStatus} message={modalMessage} />
     </>
   );
