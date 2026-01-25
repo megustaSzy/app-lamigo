@@ -13,6 +13,7 @@ import {
   User as LucideUser,
   LogOut as LucideLogOut,
   LogIn as LucideLogIn,
+  Ticket as LucideTicket,
 } from "lucide-react";
 
 // ========================
@@ -112,7 +113,7 @@ export default function NavBar() {
             JSON.stringify({
               name: res.data.name,
               avatar: res.data.avatar,
-            })
+            }),
           );
         }
       } catch {
@@ -352,6 +353,14 @@ export default function NavBar() {
                     >
                       <LucideUser size={16} />
                       {translations.editProfile}
+                    </Link>
+                    <Link
+                      href="/tiket"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm text-gray-800"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      <LucideTicket size={16} />
+                      {translations.ticket}
                     </Link>
                     <button
                       onClick={() => {

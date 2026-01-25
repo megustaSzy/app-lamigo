@@ -356,15 +356,26 @@ export default function TiketPage() {
                           {statusLabel(t.paymentStatus)}
                         </Badge>
 
-                        <Link href={`/tiket/${encodedId}`}>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="rounded-xl"
-                          >
-                            Lihat
-                          </Button>
-                        </Link>
+                        {t.paymentStatus === "pending" ? (
+                          <Link href={`/payment/${encodedId}`}>
+                            <Button
+                              size="sm"
+                              className="rounded-xl bg-blue-600 hover:bg-blue-700"
+                            >
+                              Bayar
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Link href={`/tiket/${encodedId}`}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="rounded-xl"
+                            >
+                              Lihat
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
