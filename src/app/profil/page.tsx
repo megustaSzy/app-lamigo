@@ -2,7 +2,17 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Cookies from "js-cookie";
-import { CheckCircle2, Loader2, User, Camera } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  User,
+  Camera,
+  Mail,
+  Phone,
+  Edit2,
+  Save,
+  X,
+} from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,6 +52,7 @@ export default function ProfilePage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const buildAvatarUrl = useCallback(
     (avatar?: string | null) =>
@@ -101,6 +112,7 @@ export default function ProfilePage() {
       setSuccess(true);
       setFile(null);
       setPreview(null);
+      setIsEditing(false);
       fetchProfile();
     } catch (err: any) {
       alert(err.message);
@@ -115,130 +127,201 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 px-4 py-8 md:py-12">
-        <div className="mx-auto max-w-5xl space-y-8">
-          {/* HEADER */}
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold text-blue-600">
+      <div className="min-h-screen bg-slate-50 px-4 py-8">
+        <div className="mx-auto max-w-5xl">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-800 mb-2">
               Profile Saya
             </h1>
-            <p className="text-gray-600 mt-1">
-              Kelola informasi akun dan foto profil
-            </p>
+            <p className="text-slate-600">Kelola informasi pribadi Anda</p>
           </div>
 
-          {/* MAIN CONTENT */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* LEFT – PROFILE CARD */}
-            <Card className="md:col-span-1">
-              <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-                <div className="relative group">
-                  <Avatar className="h-28 w-28 border shadow-sm">
-                    <AvatarImage src={preview || user.avatar} />
-                    <AvatarFallback className="text-2xl">
-                      {user.name?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Profile Card */}
+            <div className="lg:col-span-1">
+              <Card className="border shadow-sm">
+                <div className="h-24 bg-slate-800"></div>
 
-                  <Label className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition">
-                    <Camera className="text-white" />
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (!f) return;
-                        setFile(f);
-                        setPreview(URL.createObjectURL(f));
-                      }}
-                    />
-                  </Label>
-                </div>
+                <CardContent className="pt-16 pb-6 text-center -mt-12">
+                  <div className="relative inline-block mb-4">
+                    <Avatar className="h-24 w-24 border-4 border-white shadow-md">
+                      <AvatarImage src={preview || user.avatar} />
+                      <AvatarFallback className="text-2xl bg-slate-700 text-white">
+                        {user.name?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
 
-                <div>
-                  <h2 className="text-lg font-semibold">{user.name}</h2>
-                  <p className="text-sm text-gray-500">{user.email}</p>
-                </div>
+                    <Label className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 cursor-pointer transition-opacity">
+                      <Camera className="text-white" size={24} />
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          setFile(f);
+                          setPreview(URL.createObjectURL(f));
+                        }}
+                      />
+                    </Label>
+                  </div>
 
-                <span className="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-600 font-medium">
-                  {user.role}
-                </span>
-              </CardContent>
-            </Card>
+                  <h2 className="text-xl font-bold text-slate-800 mb-1">
+                    {user.name}
+                  </h2>
+                  <p className="text-sm text-slate-500 mb-4">{user.email}</p>
 
-            {/* RIGHT – FORM */}
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <h3 className="font-semibold flex items-center gap-2">
-                  <User size={18} />
-                  Informasi Pribadi
-                </h3>
-              </CardHeader>
+                  <div className="inline-block px-4 py-1.5 rounded-full bg-slate-800 text-white text-sm font-medium">
+                    {user.role}
+                  </div>
 
-              <CardContent className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {preview && (
+                    <div className="mt-4">
+                      <Button
+                        onClick={() => {
+                          setFile(null);
+                          setPreview(null);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        <X size={16} className="mr-2" />
+                        Batalkan
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Form Card */}
+            <div className="lg:col-span-2">
+              <Card className="border shadow-sm">
+                <CardHeader className="border-b bg-white">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-slate-800">
+                      Informasi Pribadi
+                    </h3>
+                    <Button
+                      variant={isEditing ? "destructive" : "default"}
+                      size="sm"
+                      onClick={() => setIsEditing(!isEditing)}
+                      className={
+                        isEditing ? "" : "bg-slate-800 hover:bg-slate-700"
+                      }
+                    >
+                      {isEditing ? (
+                        <>
+                          <X size={16} className="mr-2" />
+                          Batal
+                        </>
+                      ) : (
+                        <>
+                          <Edit2 size={16} className="mr-2" />
+                          Edit
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="p-6 space-y-6">
+                  {/* Nama */}
                   <div className="space-y-2">
-                    <Label>Nama</Label>
+                    <Label className="text-sm font-medium text-slate-700">
+                      Nama Lengkap
+                    </Label>
                     <Input
                       value={user.name}
                       onChange={(e) =>
                         setUser({ ...user, name: e.target.value })
                       }
+                      disabled={!isEditing}
+                      className="h-11 disabled:bg-slate-50"
+                      placeholder="Masukkan nama lengkap"
                     />
                   </div>
 
+                  {/* Email */}
                   <div className="space-y-2">
-                    <Label>Email</Label>
-                    <Input value={user.email} disabled />
+                    <Label className="text-sm font-medium text-slate-700">
+                      Email
+                    </Label>
+                    <Input
+                      value={user.email}
+                      disabled
+                      className="h-11 bg-slate-50"
+                    />
+                    <p className="text-xs text-slate-500">
+                      Email tidak dapat diubah
+                    </p>
                   </div>
 
-                  <div className="space-y-2 md:col-span-2">
-                    <Label>No. Telepon</Label>
+                  {/* Telepon */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Nomor Telepon
+                    </Label>
                     <Input
                       value={user.notelp}
                       onChange={(e) =>
                         setUser({ ...user, notelp: e.target.value })
                       }
-                      placeholder="08xxxxxxxxxx"
+                      disabled={!isEditing}
+                      placeholder="081234567890"
+                      className="h-11 disabled:bg-slate-50"
                     />
                   </div>
-                </div>
 
-                <div className="pt-4">
-                  <Button
-                    onClick={updateProfile}
-                    disabled={saving}
-                    className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    {saving ? (
-                      <>
-                        <Loader2 className="mr-2 animate-spin" />
-                        Menyimpan...
-                      </>
-                    ) : (
-                      "Simpan Perubahan"
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  {/* Save Button */}
+                  {isEditing && (
+                    <div className="pt-4">
+                      <Button
+                        onClick={updateProfile}
+                        disabled={saving}
+                        className="w-full h-11 bg-slate-800 hover:bg-slate-700"
+                      >
+                        {saving ? (
+                          <>
+                            <Loader2 className="mr-2 animate-spin" size={18} />
+                            Menyimpan...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="mr-2" size={18} />
+                            Simpan Perubahan
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* SUCCESS DIALOG */}
+      {/* Success Dialog */}
       <Dialog open={success} onOpenChange={setSuccess}>
-        <DialogContent>
-          <div className="text-center space-y-4 py-6">
-            <CheckCircle2 className="mx-auto text-green-500" size={48} />
+        <DialogContent className="sm:max-w-md">
+          <div className="text-center space-y-4 py-4">
+            <div className="inline-block p-3 bg-green-100 rounded-full">
+              <CheckCircle2 className="text-green-600" size={48} />
+            </div>
             <DialogHeader>
-              <DialogTitle>Berhasil</DialogTitle>
-              <DialogDescription>Profil berhasil diperbarui</DialogDescription>
+              <DialogTitle className="text-xl font-bold">Berhasil!</DialogTitle>
+              <DialogDescription>
+                Profil Anda telah berhasil diperbarui
+              </DialogDescription>
             </DialogHeader>
             <Button
               onClick={() => setSuccess(false)}
-              className="bg-blue-600 text-white"
+              className="bg-slate-800 hover:bg-slate-700"
             >
               Tutup
             </Button>

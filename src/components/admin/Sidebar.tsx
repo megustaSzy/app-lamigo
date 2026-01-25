@@ -17,6 +17,7 @@ import {
   FunnelPlus,
   PiggyBank,
   ChevronDown,
+  Activity,
 } from "lucide-react";
 
 export default function Sidebar({ isOpen }: { isOpen: boolean }) {
@@ -94,6 +95,11 @@ export default function Sidebar({ isOpen }: { isOpen: boolean }) {
           icon: <PiggyBank size={16} />,
         },
       ],
+    },
+    {
+      title: "Log Aktivitas",
+      href: "/admin/log-aktivitas",
+      icon: <Activity size={18} />,
     },
   ];
 

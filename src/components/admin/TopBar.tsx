@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
   Menu,
   Sun,
@@ -67,16 +67,18 @@ export default function TopBar({
   // logout logic
   const handleLogout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
+      await apiFetch("/api/auth/logout", {
         method: "POST",
-        credentials: "include",
+        body: JSON.stringify({
+          refreshToken: Cookies.get("refreshToken"),
+        }),
       });
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
-      document.cookie = "accessToken=; path=/; max-age=0";
-      document.cookie = "refreshToken=; path=/; max-age=0";
-      document.cookie = "role=; path=/; max-age=0";
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      Cookies.remove("role");
 
       localStorage.clear();
       sessionStorage.clear();

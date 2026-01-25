@@ -4,7 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Activity } from "lucide-react";
 import Cookies from "js-cookie";
 import { apiFetch } from "@/helpers/api";
 import { usePathname } from "next/navigation";
@@ -60,6 +60,7 @@ export default function NavBar() {
     about: "Tentang Kami",
     tour: "Daftar Kabupaten",
     ticket: "Tiket Saya",
+    activity: "Log Aktivitas",
     contact: "Kontak",
     login: "Masuk",
     signup: "Daftar",
@@ -361,6 +362,14 @@ export default function NavBar() {
                     >
                       <LucideTicket size={16} />
                       {translations.ticket}
+                    </Link>
+                    <Link
+                      href="/log-aktivitas"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm text-gray-800"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      <Activity size={16} />
+                      {translations.activity}
                     </Link>
                     <button
                       onClick={() => {
