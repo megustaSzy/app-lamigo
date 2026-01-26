@@ -10,7 +10,7 @@ import {
   ApiDestinationsResponse,
   DestinationsType,
 } from "@/types/destination";
-import DestinationModal from "../app/components/DestinationModal";
+import DestinationModal from "./DestinationModal";
 
 type Props = {
   setSelectedData?: (data: ApiDestinationItem) => void;
@@ -34,7 +34,7 @@ export default function SearchComponent({
     useState<DestinationsType | null>(null);
 
   const mapToDestinationsType = (
-    item: ApiDestinationItem
+    item: ApiDestinationItem,
   ): DestinationsType => ({
     id: item.id,
     name: item.name ?? "Tanpa Nama",
@@ -59,7 +59,7 @@ export default function SearchComponent({
         if (area) params.append("regionId", area);
 
         const res = await apiFetch<ApiDestinationsResponse>(
-          `/api/destinations?${params.toString()}`
+          `/api/destinations?${params.toString()}`,
         );
 
         if (res?.status === 200 && res.data?.items) {

@@ -31,7 +31,7 @@ const placeholderItems: ChooseUsItem[] = Array.from(
     header: "",
     name: "",
     imageUrl: "/images/placeholder.svg",
-  })
+  }),
 );
 
 // skeleton card (UKURAN SAMA PERSIS)

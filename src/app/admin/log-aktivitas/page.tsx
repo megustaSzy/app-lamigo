@@ -5,7 +5,7 @@ import { apiFetch } from "@/helpers/api";
 import type {
   AdminActivityLogResponse,
   AdminActivityLogItem,
-} from "@/types/admin/activity-log";
+} from "@/types/activity-log";
 
 import AdminLogAktivitasTable from "@/components/admin/log-activity/LogAktivitasTable";
 
