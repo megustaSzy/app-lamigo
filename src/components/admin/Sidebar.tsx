@@ -31,24 +31,30 @@ export default function Sidebar({ isOpen }: { isOpen: boolean }) {
       icon: <LayoutDashboard size={18} />,
     },
     {
-      title: "Destinasi",
-      href: "/admin/destinasi",
-      icon: <Mountain size={18} />,
-    },
-    {
-      title: "Kategori Wisata",
-      href: "/admin/kategori-wisata",
+      title: "Master Data", // Induk menu
       icon: <Tags size={18} />,
-    },
-    {
-      title: "Kategori Kabupaten",
-      href: "/admin/kategori-kabupaten",
-      icon: <MapPin size={18} />,
-    },
-    {
-      title: "Lokasi Penjemputan",
-      href: "/admin/pickup-penjemputan",
-      icon: <MapPin size={18} />,
+      children: [
+        {
+          title: "Destinasi",
+          href: "/admin/destinasi",
+          icon: <Mountain size={16} />,
+        },
+        {
+          title: "Kategori Wisata",
+          href: "/admin/kategori-wisata",
+          icon: <Tags size={16} />,
+        },
+        {
+          title: "Kategori Kabupaten",
+          href: "/admin/kategori-kabupaten",
+          icon: <MapPin size={16} />,
+        },
+        {
+          title: "Lokasi Penjemputan",
+          href: "/admin/pickup-penjemputan",
+          icon: <MapPin size={16} />,
+        },
+      ],
     },
     {
       title: "Pesanan",

@@ -102,14 +102,7 @@ export default function TopBar({
               <Menu className="h-5 w-5" />
             </Button>
 
-            <div className="relative hidden md:flex items-center">
-              <Search className="absolute left-3 h-4 w-4 text-gray-400 dark:text-gray-500" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-10 w-64 lg:w-80 bg-gray-50 dark:bg-neutral-900 border-gray-200 dark:border-neutral-700 focus-visible:ring-blue-500"
-              />
-            </div>
+            <div className="relative hidden md:flex items-center"></div>
           </div>
 
           {/* RIGHT */}

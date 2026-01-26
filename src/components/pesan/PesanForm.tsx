@@ -60,6 +60,9 @@ export default function PesanForm({
 
   const estimasiTotal = price * quantity;
 
+  const departTimes = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00"];
+  const returnTimes = ["15:00", "16:00", "17:00", "18:00"];
+
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -80,27 +83,30 @@ export default function PesanForm({
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   };
 
-  const departTimes = Array.from({ length: 8 }, (_, i) => {
-    const hour = 7 + i;
-    return `${hour.toString().padStart(2, "0")}:00`;
-  });
-
-  const returnTimes = Array.from({ length: 6 }, (_, i) => {
-    const hour = 14 + i;
-    return `${hour.toString().padStart(2, "0")}:00`;
-  });
-
   const handleSubmit = () => {
     const newErrors: Errors = {};
 
+    if (!pickupLocationId)
+      newErrors.pickupLocationId = "Lokasi penjemputan wajib dipilih";
     if (!date) newErrors.date = "Tanggal keberangkatan wajib dipilih";
-
     if (!departTime) newErrors.departTime = "Waktu berangkat wajib dipilih";
-
     if (!returnTime) newErrors.returnTime = "Waktu pulang wajib dipilih";
 
-    setErrors(newErrors);
+    // Validasi tambahan: jam depart & return sesuai daftar
+    if (departTime && !departTimes.includes(departTime)) {
+      newErrors.departTime = `Waktu berangkat harus salah satu dari: ${departTimes.join(", ")}`;
+    }
+    if (returnTime && !returnTimes.includes(returnTime)) {
+      newErrors.returnTime = `Waktu pulang harus salah satu dari: ${returnTimes.join(", ")}`;
+    }
 
+    // Validasi returnTime > departTime
+    if (departTime && returnTime && returnTime <= departTime) {
+      newErrors.returnTime =
+        "Waktu pulang harus lebih besar dari waktu berangkat";
+    }
+
+    setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
     onSubmit({
@@ -114,7 +120,6 @@ export default function PesanForm({
 
   return (
     <div className="px-5 pb-5 space-y-5 bg-white rounded-2xl shadow-sm border">
-      {/* FORM */}
       <div className="space-y-3 text-sm">
         {/* LOKASI */}
         <Label>Lokasi Penjemputan</Label>
@@ -153,9 +158,7 @@ export default function PesanForm({
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-7 w-full justify-start px-0 py-0
-                  font-medium text-xs text-neutral-700
-                  hover:bg-transparent hover:text-blue-600"
+                className="h-7 w-full justify-start px-0 py-0 font-medium text-xs text-neutral-700 hover:bg-transparent hover:text-blue-600"
               >
                 {date ? (
                   formatDate(date)
@@ -164,7 +167,6 @@ export default function PesanForm({
                 )}
               </Button>
             </PopoverTrigger>
-
             <PopoverContent
               className="w-auto p-3 rounded-2xl shadow-lg border"
               align="start"
@@ -174,15 +176,21 @@ export default function PesanForm({
                 selected={date ? new Date(date) : undefined}
                 onSelect={(d) => {
                   if (d) {
-                    const year = d.getFullYear();
-                    const month = String(d.getMonth() + 1).padStart(2, "0");
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, "0");
                     const day = String(d.getDate()).padStart(2, "0");
-                    setDate(`${year}-${month}-${day}`);
+                    setDate(`${y}-${m}-${day}`);
                     setOpenCalendar(false);
                     setErrors((prev) => ({ ...prev, date: undefined }));
                   }
                 }}
                 initialFocus
+                disabled={(d) => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  d.setHours(0, 0, 0, 0);
+                  return d < today; // tanggal sebelum hari ini tidak bisa dipilih
+                }}
               />
             </PopoverContent>
           </Popover>
@@ -196,16 +204,13 @@ export default function PesanForm({
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-7 w-full justify-start px-0 py-0
-                  font-medium text-xs text-neutral-700
-                  hover:bg-transparent hover:text-blue-600"
+                className="h-7 w-full justify-start px-0 py-0 font-medium text-xs text-neutral-700 hover:bg-transparent hover:text-blue-600"
               >
                 {departTime || (
                   <span className="text-neutral-500">Pilih jam</span>
                 )}
               </Button>
             </PopoverTrigger>
-
             <PopoverContent className="w-56">
               <div className="grid grid-cols-4 gap-2">
                 {departTimes.map((time) => (
@@ -214,17 +219,13 @@ export default function PesanForm({
                     onClick={() => {
                       setDepartTime(time);
                       setOpenDepart(false);
-                      setErrors((prev) => ({
-                        ...prev,
-                        departTime: undefined,
-                      }));
+                      setErrors((prev) => ({ ...prev, departTime: undefined }));
                     }}
-                    className={`rounded-lg py-2 text-xs font-semibold transition-all
-                      ${
-                        departTime === time
-                          ? "bg-blue-600 text-white shadow-md scale-105"
-                          : "border border-neutral-200 text-neutral-600 hover:bg-blue-50 hover:border-blue-400"
-                      }`}
+                    className={`rounded-lg py-2 text-xs font-semibold transition-all ${
+                      departTime === time
+                        ? "bg-blue-600 text-white shadow-md scale-105"
+                        : "border border-neutral-200 text-neutral-600 hover:bg-blue-50 hover:border-blue-400"
+                    }`}
                   >
                     {time}
                   </button>
@@ -242,16 +243,13 @@ export default function PesanForm({
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-7 w-full justify-start px-0 py-0
-                  font-medium text-xs text-neutral-700
-                  hover:bg-transparent hover:text-blue-600"
+                className="h-7 w-full justify-start px-0 py-0 font-medium text-xs text-neutral-700 hover:bg-transparent hover:text-blue-600"
               >
                 {returnTime || (
                   <span className="text-neutral-500">Pilih jam</span>
                 )}
               </Button>
             </PopoverTrigger>
-
             <PopoverContent className="w-56">
               <div className="grid grid-cols-4 gap-2">
                 {returnTimes.map((time) => (
@@ -260,17 +258,13 @@ export default function PesanForm({
                     onClick={() => {
                       setReturnTime(time);
                       setOpenReturn(false);
-                      setErrors((prev) => ({
-                        ...prev,
-                        returnTime: undefined,
-                      }));
+                      setErrors((prev) => ({ ...prev, returnTime: undefined }));
                     }}
-                    className={`rounded-xl py-2 text-sm font-medium transition-all
-                      ${
-                        returnTime === time
-                          ? "bg-blue-600 text-white shadow"
-                          : "border hover:bg-neutral-100"
-                      }`}
+                    className={`rounded-lg py-2 text-xs font-semibold transition-all ${
+                      returnTime === time
+                        ? "bg-blue-600 text-white shadow-md scale-105"
+                        : "border border-neutral-200 text-neutral-600 hover:bg-blue-50 hover:border-blue-400"
+                    }`}
                   >
                     {time}
                   </button>
@@ -287,8 +281,7 @@ export default function PesanForm({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setQuantity((p) => Math.max(1, p - 1))}
-              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100
-                text-sm font-bold transition"
+              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100 text-sm font-bold transition"
             >
               −
             </button>
@@ -297,8 +290,7 @@ export default function PesanForm({
             </span>
             <button
               onClick={() => setQuantity((p) => Math.min(16, p + 1))}
-              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100
-                text-sm font-bold transition"
+              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100 text-sm font-bold transition"
             >
               +
             </button>
@@ -309,11 +301,7 @@ export default function PesanForm({
       {/* SUBMIT */}
       <button
         onClick={handleSubmit}
-        className="w-full flex justify-between items-center
-          bg-gradient-to-r from-blue-600 to-blue-500
-          hover:from-blue-700 hover:to-blue-600
-          text-white py-3 px-5 rounded-2xl text-sm font-semibold
-          shadow-md hover:shadow-lg transition-all"
+        className="w-full flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3 px-5 rounded-2xl text-sm font-semibold shadow-md hover:shadow-lg transition-all"
       >
         <span>Pesan</span>
         <span>IDR {estimasiTotal.toLocaleString("id-ID")}</span>
@@ -321,6 +309,8 @@ export default function PesanForm({
     </div>
   );
 }
+
+// ... Label, ErrorText, Field sama seperti sebelumnya
 
 function Label({ children }: { children: string }) {
   return (
