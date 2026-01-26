@@ -10,7 +10,7 @@ import {
   ApiDestinationsResponse,
   DestinationsType,
 } from "@/types/destination";
-import DestinationModal from "./DestinationModal";
+import DestinationModal from "../app/components/DestinationModal";
 
 type Props = {
   setSelectedData?: (data: ApiDestinationItem) => void;
