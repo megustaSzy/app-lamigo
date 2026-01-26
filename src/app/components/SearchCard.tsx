@@ -22,9 +22,6 @@ import { Button } from "@/components/ui/button";
 import { ApiCategoryResponse, CategoryItem } from "@/types/category";
 import { RegionApiResponse, Area } from "@/types/ChardRegion";
 
-// Mapbox token (gratis plan)
-const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
 export default function SearchCard() {
   const router = useRouter();
 
@@ -48,7 +45,7 @@ export default function SearchCard() {
   const [errorMessage, setErrorMessage] = useState("");
 
   // =======================
-  // DETEKSI LOKASI + MAPBOX + OSM
+  // DETEKSI LOKASI + NAMA LENGKAP
   // =======================
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -62,38 +59,18 @@ export default function SearchCard() {
         setCoordinates({ lat: latitude, lng: longitude });
 
         try {
-          // 1️⃣ Mapbox untuk akurasi titik
-          const mapboxRes = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_TOKEN}`,
-          );
-          const mapboxData = await mapboxRes.json();
-
-          let village = "";
-          let district = "";
-          let city = "";
-
-          // Ambil koordinat Mapbox
-          if (mapboxData.features && mapboxData.features.length > 0) {
-            const feature = mapboxData.features[0];
-            // Simpan coords akurat dari Mapbox
-            setCoordinates({
-              lat: feature.center[1],
-              lng: feature.center[0],
-            });
-          }
-
-          // 2️⃣ OSM Nominatim untuk nama desa/kecamatan/kota
+          // Reverse geocoding OSM Nominatim
           const osmRes = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
           );
           const osmData = await osmRes.json();
           const addr = osmData.address || {};
 
-          village = addr.suburb || addr.village || addr.neighbourhood || "";
-          district = addr.city_district || addr.county || "";
-          city = addr.city || addr.town || addr.county || "";
+          // Ambil Kota/Kabupaten dan Provinsi
+          const kota = addr.city || addr.town || addr.county || "";
+          const provinsi = addr.state || "";
 
-          const parts = [village, district, city].filter(Boolean);
+          const parts = [kota, provinsi].filter(Boolean);
           setLocation(
             parts.join(", ") ||
               `Lokasi ditemukan (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`,
@@ -199,7 +176,11 @@ export default function SearchCard() {
                       }}
                     >
                       <Check
-                        className={`mr-2 h-4 w-4 ${selectedCategory?.id === cat.id ? "opacity-100" : "opacity-0"}`}
+                        className={`mr-2 h-4 w-4 ${
+                          selectedCategory?.id === cat.id
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
                       />
                       {cat.name}
                     </CommandItem>
@@ -244,7 +225,11 @@ export default function SearchCard() {
                       }}
                     >
                       <Check
-                        className={`mr-2 h-4 w-4 ${selectedArea?.id === area.id ? "opacity-100" : "opacity-0"}`}
+                        className={`mr-2 h-4 w-4 ${
+                          selectedArea?.id === area.id
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
                       />
                       {area.nama}
                     </CommandItem>
