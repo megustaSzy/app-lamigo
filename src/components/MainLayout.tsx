@@ -1,6 +1,7 @@
 "use client";
 
 import NavBar from "../app/components/NavBar";
+import Footer from "../app/components/Footer";
 
 export default function MainLayout({
   children,
@@ -10,9 +11,8 @@ export default function MainLayout({
   return (
     <>
       <NavBar />
-
-      {/* offset karena navbar fixed */}
-      <main className="pt-16">{children}</main>
+      {children}
+      <Footer />
     </>
   );
 }
