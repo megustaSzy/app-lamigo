@@ -88,7 +88,15 @@ export default function PesanComponent() {
     fetchPickup();
   }, []);
 
-  if (loading) return <p className="text-center mt-20">Loading...</p>;
+  if (loading)
+    return (
+      <main className="min-h-screen flex justify-center items-center bg-neutral-100 px-4 py-8">
+        <div className="flex justify-center items-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </main>
+    );
+
   if (!destination)
     return <p className="text-center mt-20">Destinasi tidak ditemukan</p>;
 

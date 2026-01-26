@@ -54,7 +54,12 @@ export default function AdminLogAktivitasTable({ logs }: Props) {
                 <div className="flex items-center justify-center gap-2 text-gray-600">
                   <CalendarClock className="h-4 w-4 text-gray-400" />
                   <span className="whitespace-nowrap">
-                    {new Date(log.createdAt).toLocaleString("id-ID")}
+                    {new Date(log.createdAt).toLocaleDateString("id-ID", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
                   </span>
                 </div>
               </TableCell>
