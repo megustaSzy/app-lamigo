@@ -140,7 +140,9 @@ export default function TiketPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
+
     return tickets
+      .filter((t) => t.paymentStatus === "paid")
       .filter((t) =>
         statusFilter === "all"
           ? true
