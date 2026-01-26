@@ -16,7 +16,8 @@ type Props = {
   logs: AdminActivityLogItem[];
 };
 
-export default function AdminLogAktivitasTable({ logs }: Props) {
+
+export default function LogAktivitasTable({ logs }: Props) {
   if (logs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12">

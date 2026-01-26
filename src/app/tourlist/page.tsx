@@ -1,4 +1,4 @@
-    "use client";
+"use client";
 
 import HeroTourSection from "../components/tourlist/HeroTourSection";
 import DaftarFavorite from "../components/tourlist/DaftarFavorite";
@@ -15,4 +15,3 @@ export default function AboutPage() {
     </>
   );
 }
-

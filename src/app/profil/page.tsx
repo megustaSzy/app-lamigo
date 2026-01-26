@@ -283,7 +283,7 @@ export default function ProfilePage() {
                       <Button
                         onClick={updateProfile}
                         disabled={saving}
-                        className="w-full h-11 bg-slate-800 hover:bg-slate-700"
+                        className="w-full h-11 bg-blue-600 text-white"
                       >
                         {saving ? (
                           <>
