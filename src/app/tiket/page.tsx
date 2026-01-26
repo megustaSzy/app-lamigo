@@ -142,7 +142,6 @@ export default function TiketPage() {
     const q = query.trim().toLowerCase();
 
     return tickets
-      .filter((t) => t.paymentStatus === "paid")
       .filter((t) =>
         statusFilter === "all"
           ? true
@@ -358,7 +357,7 @@ export default function TiketPage() {
                           {statusLabel(t.paymentStatus)}
                         </Badge>
 
-                        {t.paymentStatus === "pending" ? (
+                        {t.paymentStatus === "pending" && (
                           <Link href={`/payment/${encodedId}`}>
                             <Button
                               size="sm"
@@ -367,7 +366,9 @@ export default function TiketPage() {
                               Bayar
                             </Button>
                           </Link>
-                        ) : (
+                        )}
+
+                        {t.paymentStatus === "paid" && (
                           <Link href={`/tiket/${encodedId}`}>
                             <Button
                               size="sm"
@@ -378,6 +379,8 @@ export default function TiketPage() {
                             </Button>
                           </Link>
                         )}
+
+                        {/* expired / failed → tidak ada tombol */}
                       </div>
                     </CardContent>
                   </Card>
