@@ -2,23 +2,16 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Cookies from "js-cookie";
-import {
-  CheckCircle2,
-  Loader2,
-  User,
-  Camera,
-  Mail,
-  Phone,
-  Edit2,
-  Save,
-  X,
-} from "lucide-react";
+import { CheckCircle2, Loader2, Camera, Edit2, Save, X } from "lucide-react";
+
+import MainLayout from "@/components/MainLayout";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -48,6 +41,7 @@ export default function ProfilePage() {
     avatar: "/images/default-avatar.png",
   });
 
+  const [loading, setLoading] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -68,21 +62,26 @@ export default function ProfilePage() {
     const token = Cookies.get("accessToken");
     if (!token) return;
 
-    const res = await fetch(`${API_URL}/api/users/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/users/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (!res.ok) return;
+      if (!res.ok) return;
 
-    const json = await res.json();
-    setUser({
-      id: json.data.id,
-      name: json.data.name ?? "",
-      email: json.data.email ?? "",
-      notelp: json.data.notelp ?? "",
-      role: json.data.role ?? "",
-      avatar: buildAvatarUrl(json.data.avatar),
-    });
+      const json = await res.json();
+      setUser({
+        id: json.data.id,
+        name: json.data.name ?? "",
+        email: json.data.email ?? "",
+        notelp: json.data.notelp ?? "",
+        role: json.data.role ?? "",
+        avatar: buildAvatarUrl(json.data.avatar),
+      });
+    } finally {
+      setLoading(false);
+    }
   }, [API_URL, buildAvatarUrl]);
 
   const updateProfile = async () => {
@@ -98,16 +97,11 @@ export default function ProfilePage() {
     try {
       const res = await fetch(`${API_URL}/api/users/${user.id}`, {
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Gagal update profile");
-      }
+      if (!res.ok) throw new Error("Gagal update profile");
 
       setSuccess(true);
       setFile(null);
@@ -126,208 +120,197 @@ export default function ProfilePage() {
   }, [fetchProfile]);
 
   return (
-    <>
-      <div className="min-h-screen bg-slate-50 px-4 py-8">
-        <div className="mx-auto max-w-5xl">
-          {/* Header */}
+    <MainLayout>
+      <div className="bg-linear-to-b via-blue-200 from-blue-200 to-blue-50 min-h-screen pt-28 pb-16">
+        <div className="max-w-5xl mx-auto px-4">
+          {/* HEADER (SAMA GAYA LOG AKTIVITAS) */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">
-              Profile Saya
-            </h1>
-            <p className="text-slate-600">Kelola informasi pribadi Anda</p>
+            <h2 className="text-2xl font-semibold text-blue-700 tracking-tight">
+              Profil Saya
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Kelola informasi pribadi
+            </p>
           </div>
 
-          {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Profile Card */}
-            <div className="lg:col-span-1">
-              <Card className="border shadow-sm">
-                <div className="h-24 bg-slate-800"></div>
+            {/* PROFILE CARD */}
+            <Card className="shadow-sm">
+              <div className="h-24 bg-blue-600 rounded-t-xl" />
 
-                <CardContent className="pt-16 pb-6 text-center -mt-12">
-                  <div className="relative inline-block mb-4">
-                    <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-                      <AvatarImage src={preview || user.avatar} />
-                      <AvatarFallback className="text-2xl bg-slate-700 text-white">
-                        {user.name?.charAt(0) || "U"}
-                      </AvatarFallback>
-                    </Avatar>
+              <CardContent className="-mt-12 pb-6 text-center">
+                {loading ? (
+                  <>
+                    <Skeleton className="h-24 w-24 rounded-full mx-auto mb-4" />
+                    <Skeleton className="h-5 w-32 mx-auto mb-2" />
+                    <Skeleton className="h-4 w-40 mx-auto mb-3" />
+                    <Skeleton className="h-6 w-20 mx-auto rounded-full" />
+                  </>
+                ) : (
+                  <>
+                    <div className="relative inline-block mb-4">
+                      <Avatar className="h-24 w-24 border-4 border-white shadow-md">
+                        <AvatarImage src={preview || user.avatar} />
+                        <AvatarFallback className="bg-blue-600 text-white text-2xl">
+                          {user.name?.charAt(0) || "U"}
+                        </AvatarFallback>
+                      </Avatar>
 
-                    <Label className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 cursor-pointer transition-opacity">
-                      <Camera className="text-white" size={24} />
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (!f) return;
-                          setFile(f);
-                          setPreview(URL.createObjectURL(f));
-                        }}
-                      />
-                    </Label>
-                  </div>
-
-                  <h2 className="text-xl font-bold text-slate-800 mb-1">
-                    {user.name}
-                  </h2>
-                  <p className="text-sm text-slate-500 mb-4">{user.email}</p>
-
-                  <div className="inline-block px-4 py-1.5 rounded-full bg-slate-800 text-white text-sm font-medium">
-                    {user.role}
-                  </div>
-
-                  {preview && (
-                    <div className="mt-4">
-                      <Button
-                        onClick={() => {
-                          setFile(null);
-                          setPreview(null);
-                        }}
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                      >
-                        <X size={16} className="mr-2" />
-                        Batalkan
-                      </Button>
+                      {isEditing && (
+                        <Label className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 cursor-pointer transition">
+                          <Camera className="text-white" />
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (!f) return;
+                              setFile(f);
+                              setPreview(URL.createObjectURL(f));
+                            }}
+                          />
+                        </Label>
+                      )}
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
 
-            {/* Form Card */}
-            <div className="lg:col-span-2">
-              <Card className="border shadow-sm">
-                <CardHeader className="border-b bg-white">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-slate-800">
-                      Informasi Pribadi
-                    </h3>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      {user.name || "-"}
+                    </h2>
+                    <p className="text-sm text-gray-500 mb-3">
+                      {user.email || "-"}
+                    </p>
+
+                    <span className="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                      {user.role || "-"}
+                    </span>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* FORM CARD */}
+            <Card className="lg:col-span-2 shadow-sm">
+              <CardHeader className="border-b bg-white">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Informasi Pribadi
+                  </h3>
+
+                  {!loading && (
                     <Button
-                      variant={isEditing ? "destructive" : "default"}
                       size="sm"
+                      variant={isEditing ? "outline" : "default"}
                       onClick={() => setIsEditing(!isEditing)}
                       className={
-                        isEditing ? "" : "bg-slate-800 hover:bg-slate-700"
+                        isEditing ? "" : "bg-blue-600 hover:bg-blue-700"
                       }
                     >
                       {isEditing ? (
                         <>
-                          <X size={16} className="mr-2" />
-                          Batal
+                          <X className="mr-2" size={16} /> Batal
                         </>
                       ) : (
                         <>
-                          <Edit2 size={16} className="mr-2" />
-                          Edit
+                          <Edit2 className="mr-2" size={16} /> Edit
                         </>
                       )}
                     </Button>
-                  </div>
-                </CardHeader>
+                  )}
+                </div>
+              </CardHeader>
 
-                <CardContent className="p-6 space-y-6">
-                  {/* Nama */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">
-                      Nama Lengkap
-                    </Label>
-                    <Input
-                      value={user.name}
-                      onChange={(e) =>
-                        setUser({ ...user, name: e.target.value })
-                      }
-                      disabled={!isEditing}
-                      className="h-11 disabled:bg-slate-50"
-                      placeholder="Masukkan nama lengkap"
-                    />
-                  </div>
+              <CardContent className="p-6 space-y-5">
+                {loading ? (
+                  <>
+                    <Skeleton className="h-11 w-full" />
+                    <Skeleton className="h-11 w-full" />
+                    <Skeleton className="h-11 w-full" />
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <Label>Nama Lengkap</Label>
+                      <Input
+                        value={user.name}
+                        placeholder="Masukkan nama lengkap"
+                        disabled={!isEditing}
+                        onChange={(e) =>
+                          setUser({ ...user, name: e.target.value })
+                        }
+                        className="mt-1 h-11"
+                      />
+                    </div>
 
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">
-                      Email
-                    </Label>
-                    <Input
-                      value={user.email}
-                      disabled
-                      className="h-11 bg-slate-50"
-                    />
-                    <p className="text-xs text-slate-500">
-                      Email tidak dapat diubah
-                    </p>
-                  </div>
+                    <div>
+                      <Label>Email</Label>
+                      <Input
+                        value={user.email}
+                        disabled
+                        className="mt-1 h-11 bg-gray-50"
+                      />
+                    </div>
 
-                  {/* Telepon */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">
-                      Nomor Telepon
-                    </Label>
-                    <Input
-                      value={user.notelp}
-                      onChange={(e) =>
-                        setUser({ ...user, notelp: e.target.value })
-                      }
-                      disabled={!isEditing}
-                      placeholder="081234567890"
-                      className="h-11 disabled:bg-slate-50"
-                    />
-                  </div>
+                    <div>
+                      <Label>Nomor Telepon</Label>
+                      <Input
+                        value={user.notelp}
+                        placeholder="Contoh: 081234567890"
+                        disabled={!isEditing}
+                        onChange={(e) =>
+                          setUser({ ...user, notelp: e.target.value })
+                        }
+                        className="mt-1 h-11"
+                      />
+                    </div>
 
-                  {/* Save Button */}
-                  {isEditing && (
-                    <div className="pt-4">
+                    {isEditing && (
                       <Button
                         onClick={updateProfile}
                         disabled={saving}
-                        className="w-full h-11 bg-blue-600 text-white"
+                        className="w-full h-11 bg-blue-600 hover:bg-blue-700"
                       >
                         {saving ? (
                           <>
-                            <Loader2 className="mr-2 animate-spin" size={18} />
+                            <Loader2 className="mr-2 animate-spin" />
                             Menyimpan...
                           </>
                         ) : (
                           <>
-                            <Save className="mr-2" size={18} />
+                            <Save className="mr-2" />
                             Simpan Perubahan
                           </>
                         )}
                       </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+                    )}
+                  </>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
 
-      {/* Success Dialog */}
+      {/* SUCCESS DIALOG */}
       <Dialog open={success} onOpenChange={setSuccess}>
         <DialogContent className="sm:max-w-md">
           <div className="text-center space-y-4 py-4">
-            <div className="inline-block p-3 bg-green-100 rounded-full">
-              <CheckCircle2 className="text-green-600" size={48} />
-            </div>
+            <CheckCircle2 className="mx-auto text-green-600" size={56} />
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold">Berhasil!</DialogTitle>
+              <DialogTitle>Berhasil</DialogTitle>
               <DialogDescription>
-                Profil Anda telah berhasil diperbarui
+                Profil Anda berhasil diperbarui
               </DialogDescription>
             </DialogHeader>
             <Button
               onClick={() => setSuccess(false)}
-              className="bg-slate-800 hover:bg-slate-700"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               Tutup
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </MainLayout>
   );
 }

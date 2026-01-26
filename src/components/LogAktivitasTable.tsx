@@ -16,7 +16,6 @@ type Props = {
   logs: AdminActivityLogItem[];
 };
 
-
 export default function LogAktivitasTable({ logs }: Props) {
   if (logs.length === 0) {
     return (
@@ -32,9 +31,15 @@ export default function LogAktivitasTable({ logs }: Props) {
         {/* ===== Header ===== */}
         <TableHeader>
           <TableRow className="bg-gray-50">
-            <TableHead className="w-16 text-center">No</TableHead>
-            <TableHead className="w-72 text-center">Tanggal</TableHead>
-            <TableHead className="w-50 text-center">Aktivitas</TableHead>
+            <TableHead className="w-16 text-center font-semibold text-blue-900">
+              No
+            </TableHead>
+            <TableHead className="w-72 text-center font-semibold text-blue-900">
+              Tanggal
+            </TableHead>
+            <TableHead className="w-60 text-center font-semibold text-blue-900">
+              Aktivitas
+            </TableHead>
           </TableRow>
         </TableHeader>
 
@@ -61,7 +66,7 @@ export default function LogAktivitasTable({ logs }: Props) {
               </TableCell>
 
               {/* Aktivitas */}
-              <TableCell className="w-60 text-left text-gray-800 text-center">
+              <TableCell className="w-60 text-center text-gray-800">
                 <p className="leading-relaxed break-words">{log.description}</p>
               </TableCell>
             </TableRow>
