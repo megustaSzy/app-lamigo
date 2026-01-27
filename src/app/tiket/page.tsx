@@ -103,17 +103,16 @@ export default function TiketPage() {
   }, []);
 
   useEffect(() => {
-    if (!isMounted) return; // Tunggu mount selesai
+    if (!isMounted) return;
 
-    setLoading(true);
-
-    // Jika tidak ada token, set data kosong & stop loading
     if (!isUserLoggedIn) {
       setTickets([]);
       setTotalPages(1);
-      setTimeout(() => setLoading(false), 500);
+      setLoading(false);
       return;
     }
+
+    setLoading(true);
 
     const fetchTickets = async () => {
       try {
@@ -122,9 +121,11 @@ export default function TiketPage() {
         );
         setTickets(res.data.items);
         setTotalPages(res.data.total_pages);
-      } catch (error) {
-        console.error("Gagal ambil tiket", error);
-        setTickets([]);
+      } catch (error: any) {
+        if (error?.type === "UNAUTHORIZED") {
+          setIsUserLoggedIn(false);
+          return;
+        }
       } finally {
         setLoading(false);
       }
