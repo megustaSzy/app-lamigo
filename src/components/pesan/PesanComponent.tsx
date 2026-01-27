@@ -10,6 +10,7 @@ import DestinationCard from "@/components/pesan/DestinationCard";
 import PesanForm from "@/components/pesan/PesanForm";
 import { ConfirmPopup } from "@/components/pesan/ConfirmPopup";
 import { Popup } from "@/components/pesan/Popup";
+import { LoginRequiredPopup } from "@/components/pesan/LoginRequiredPopup";
 
 type ApiResponse<T> = {
   status: number;
@@ -52,6 +53,7 @@ export default function PesanComponent() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showError, setShowError] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   useEffect(() => {
     if (!destinationId) return;
@@ -152,9 +154,7 @@ export default function PesanComponent() {
 
               const payRes = await apiFetch<ApiResponse<PayResponse>>(
                 `/api/orders/${orderRes.data.id}/pay`,
-                {
-                  method: "POST",
-                },
+                { method: "POST" },
               );
 
               if (payRes.data.redirectUrl) {
@@ -162,7 +162,14 @@ export default function PesanComponent() {
               } else {
                 throw new Error("Redirect URL tidak tersedia");
               }
-            } catch (err) {
+            } catch (err: any) {
+              // 🔐 BELUM LOGIN
+              if (err?.status === 401) {
+                setShowConfirm(false);
+                setShowLoginPopup(true);
+                return;
+              }
+
               console.error(err);
               setShowError(true);
             } finally {
@@ -177,6 +184,13 @@ export default function PesanComponent() {
           title="Gagal ❌"
           desc="Lengkapi data atau coba lagi."
           onClose={() => setShowError(false)}
+        />
+      )}
+
+      {showLoginPopup && (
+        <LoginRequiredPopup
+          onClose={() => setShowLoginPopup(false)}
+          redirectTo={`/pesan?destinationId=${destination.id}`}
         />
       )}
     </main>

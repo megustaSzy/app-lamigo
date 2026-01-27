@@ -39,3 +39,19 @@ export interface RegionApiResponse {
     }[];
   };
 }
+
+export interface RegionAllItem {
+  id: number;
+  name: string;
+}
+
+export interface RegionAllResponse {
+  status: number;
+  message: string;
+  data: RegionAllItem[];
+}
+
+export interface AreaRegion {
+  id: number;
+  nama: string;
+}

@@ -70,14 +70,19 @@ export default function AdminDashboard() {
             Akses cepat untuk tugas yang sering dilakukan
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
+            <Link href="/admin/pesanan">
+              <button className="px-5 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
+                Lihat Daftar Pesanan
+              </button>
+            </Link>
+            <Link href="/admin/testimoni">
+              <button className="px-5 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
+                Kelola Testimoni
+              </button>
+            </Link>
+            <Link href="/admin/log-aktivitas"></Link>
             <button className="px-5 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
-              Tambah Pengguna Baru
-            </button>
-            <button className="px-5 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
-              Export Laporan
-            </button>
-            <button className="px-5 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
-              Pengaturan Sistem
+              Log Aktivitas
             </button>
           </div>
         </div>
