@@ -339,16 +339,19 @@ export function LoginForm({
                   </button>
                 </div>
 
-                <Link
-                  href="/forgot-password"
-                  className="block text-right text-gray-500"
-                >
-                  Lupa password?
-                </Link>
-
                 {passwordError && (
                   <p className="text-xs text-red-500 mt-1">{passwordError}</p>
                 )}
+
+                <Link
+                  href="/forgot-password"
+                  className="block text-right text-sm text-gray-500
+             hover:text-blue-600
+             focus:outline-none
+             active:text-gray-500"
+                >
+                  Lupa password?
+                </Link>
               </div>
 
               {/* Login Button */}
@@ -381,9 +384,9 @@ export function LoginForm({
 
               {/* Sign Up Link */}
               <p className="text-center text-sm text-gray-500">
-                Belum punya akun?{" "}
+                Don't have an account?{" "}
                 <Link href="/signup" className="text-blue-600 hover:underline">
-                  Daftar sekarang
+                  Sign Up
                 </Link>
               </p>
             </form>

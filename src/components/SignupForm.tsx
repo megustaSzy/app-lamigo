@@ -14,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
@@ -53,7 +52,7 @@ export default function SignupForm(props: React.ComponentProps<typeof Card>) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
-        }
+        },
       );
 
       const result: { message?: string } = await response.json();
@@ -80,127 +79,140 @@ export default function SignupForm(props: React.ComponentProps<typeof Card>) {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card
         {...props}
-        className="w-full max-w-md shadow-lg border border-gray-100 rounded-2xl"
+        className="w-full max-w-md shadow-lg border border-gray-100 rounded-2xl bg-white/80 backdrop-blur"
       >
-        {/* LOGO */}
-        <div className="flex justify-center mb-4">
+        <CardHeader className="text-center pb-2 flex flex-col items-center">
           <img
             src="/images/logo.png"
             alt="Logo"
-            className="h-20 w-auto object-contain"
+            className="w-16 h-16 object-contain mb-3"
           />
-        </div>
 
-        <CardHeader className="text-center space-y-0">
-          <CardTitle className="text-2xl font-semibold text-gray-800">
+          <CardTitle className="text-2xl font-bold text-gray-800">
             Create an Account
           </CardTitle>
-          <CardDescription className="text-gray-500 text-sm">
+
+          <CardDescription className="text-gray-500">
             Enter your information to get started
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit(handleSignup)} className="space-y-4">
-            <FieldGroup className="space-y-0">
-              <Field>
-                <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="LamiGo"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.name.message}
-                  </p>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="example@gmail.com"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="notelp">No Handphone</FieldLabel>
-                <Input
-                  id="notelp"
-                  type="text"
-                  placeholder="08xxxxxxxxxx"
-                  {...register("notelp")}
-                />
-                {errors.notelp && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.notelp.message}
-                  </p>
-                )}
-              </Field>
-            </FieldGroup>
-
-            <div className="flex flex-col gap-3">
-              <Button
-                type="submit"
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white"
-                disabled={loading}
-              >
-                {loading ? "Membuat akun..." : "Create Account"}
-              </Button>
-
-              <Button
-                variant="outline"
-                type="button"
-                className="w-full flex items-center justify-center gap-2"
-              >
-                <FcGoogle size={20} />
-                Sign up with Google
-              </Button>
+            {/* Full Name Field */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="LamiGo"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
+            {/* Email Field */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="example@gmail.com"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {/* No Handphone Field */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                No Handphone
+              </label>
+              <Input
+                id="notelp"
+                type="text"
+                placeholder="+628872738"
+                {...register("notelp")}
+              />
+              {errors.notelp && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.notelp.message}
+                </p>
+              )}
+            </div>
+
+            {/* Create Account Button */}
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={loading}
+            >
+              {loading ? "Membuat akun..." : "Create Account"}
+            </Button>
+
+            {/* Divider */}
+            <div className="relative">
+              <hr />
+              <span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-white px-2 text-gray-400 text-sm">
+                atau
+              </span>
+            </div>
+
+            {/* Google Signup Button */}
+            <Button
+              variant="outline"
+              type="button"
+              className="w-full flex gap-2"
+            >
+              <FcGoogle size={20} />
+              Sign up with Google
+            </Button>
+
             {message && (
-              <p className="text-center text-sm text-gray-600 mt-2">
-                {message}
-              </p>
+              <p className="text-center text-sm text-red-500 mt-2">{message}</p>
             )}
 
-            <p className="text-sm text-center text-gray-500 mt-4">
+            {/* Sign In Link */}
+            <p className="text-center text-sm text-gray-500">
               Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-primary font-medium hover:underline"
-              >
-                Sign in
+              <Link href="/login" className="text-blue-600 hover:underline">
+                Sign In
               </Link>
             </p>
           </form>
         </CardContent>
       </Card>
+
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
           <div className="w-[90%] max-w-sm rounded-xl bg-white px-6 py-7 shadow-xl text-center">
