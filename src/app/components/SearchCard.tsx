@@ -20,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { ApiCategoryResponse, CategoryItem } from "@/types/category";
-import { RegionApiResponse, Area } from "@/types/ChardRegion";
+import { AreaRegion, RegionAllResponse } from "@/types/ChardRegion";
 
 export default function SearchCard() {
   const router = useRouter();
@@ -32,12 +32,12 @@ export default function SearchCard() {
   } | null>(null);
 
   const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [areas, setAreas] = useState<Area[]>([]);
+  const [areas, setAreas] = useState<AreaRegion[]>([]);
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(
     null,
   );
-  const [selectedArea, setSelectedArea] = useState<Area | null>(null);
+  const [selectedArea, setSelectedArea] = useState<AreaRegion | null>(null);
 
   const [openCategory, setOpenCategory] = useState(false);
   const [openArea, setOpenArea] = useState(false);
@@ -103,13 +103,20 @@ export default function SearchCard() {
   // LOAD AREA
   // =======================
   useEffect(() => {
-    apiFetch<RegionApiResponse>("/api/region")
+    apiFetch<RegionAllResponse>("/api/region/all")
       .then((res) => {
-        if (res.status === 200 && res.data?.items) {
-          setAreas(res.data.items.map((i) => ({ id: i.id, nama: i.name })));
+        if (res.status === 200) {
+          setAreas(
+            res.data.map((region) => ({
+              id: region.id,
+              nama: region.name,
+            })),
+          );
         }
       })
-      .catch((err) => console.error("Gagal load daerah", err));
+      .catch((err) => {
+        console.error("Gagal load region", err);
+      });
   }, []);
 
   // =======================

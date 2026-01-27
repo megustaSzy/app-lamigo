@@ -35,6 +35,9 @@ export default function DestinasiSection() {
   const [loading, setLoading] = useState(true);
   const [loadingCategory, setLoadingCategory] = useState(true);
 
+  // UX state khusus (BEST PRACTICE)
+  const [isSwitchingCategory, setIsSwitchingCategory] = useState(false);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedData, setSelectedData] = useState<DestinationsType | null>(
     null,
@@ -62,6 +65,7 @@ export default function DestinasiSection() {
     try {
       const res = await apiFetch<ApiDestinationsResponse>("/api/destinations");
 
+      // delay kecil biar skeleton keliatan natural
       await new Promise((r) => setTimeout(r, 300));
 
       setData(
@@ -89,23 +93,15 @@ export default function DestinasiSection() {
   }, [loadCategories, loadDestinations]);
 
   /* =========================
-     FILTER
+     FILTER DATA
   ========================= */
   const filteredData = useMemo(() => {
     if (!activeCategory) return [];
     return data.filter((d) => d.category?.name === activeCategory);
   }, [data, activeCategory]);
 
-  /* =========================
-     GRID READY CHECK (INI KUNCINYA)
-  ========================= */
-  const isGridReady =
-    !loading &&
-    !loadingCategory &&
-    activeCategory !== "" &&
-    filteredData.length > 0;
-
-  const SKELETON_COUNT = 6;
+  const DESTINATION_SKELETON_COUNT = 6;
+  const CATEGORY_SKELETON_COUNT = 5;
 
   return (
     <section className="relative w-full bg-linear-to-b from-[#a7c8e7] to-[#f2f6f9]">
@@ -114,16 +110,24 @@ export default function DestinasiSection() {
           Tujuan Wisata Favorit
         </h2>
 
-        {/* CATEGORY */}
+        {/* =========================
+           CATEGORY
+        ========================= */}
         <div className="flex justify-center flex-wrap gap-4 mb-12">
           {loadingCategory
-            ? Array.from({ length: 6 }).map((_, i) => (
+            ? Array.from({ length: CATEGORY_SKELETON_COUNT }).map((_, i) => (
                 <Skeleton key={i} className="h-9 w-24 rounded-full" />
               ))
             : categories.map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(cat.name)}
+                  onClick={() => {
+                    setIsSwitchingCategory(true);
+                    setActiveCategory(cat.name);
+
+                    // UX feedback kecil, TANPA sentuh fetch
+                    setTimeout(() => setIsSwitchingCategory(false), 300);
+                  }}
                   className={`px-6 py-2 rounded-full border text-sm font-medium ${
                     activeCategory === cat.name
                       ? "bg-blue-600 text-white"
@@ -135,46 +139,72 @@ export default function DestinasiSection() {
               ))}
         </div>
 
-        {/* DESTINATION GRID */}
+        {/* =========================
+           DESTINATION GRID
+        ========================= */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {!isGridReady
-            ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-                <DestinationSkeleton key={i} />
-              ))
-            : filteredData.map((d) => (
-                <div
-                  key={d.id}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden"
-                >
-                  <div className="h-48">
-                    <img
-                      src={d.imageUrl || "/images/default.jpg"}
-                      alt={d.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+          {/* FIRST LOAD → SKELETON */}
+          {(loading || loadingCategory) &&
+            Array.from({ length: DESTINATION_SKELETON_COUNT }).map((_, i) => (
+              <DestinationSkeleton key={i} />
+            ))}
 
-                  <div className="p-5 text-left">
-                    <h3 className="font-semibold text-lg mb-1">{d.name}</h3>
-                    <p className="text-sm text-gray-500 mb-4">
-                      {d.region?.name ?? "Lokasi tidak diketahui"}
-                    </p>
+          {/* SWITCH CATEGORY → TEXT LOADER */}
+          {!loading && !loadingCategory && isSwitchingCategory && (
+            <div className="col-span-full py-12 text-center text-gray-500">
+              Memuat destinasi…
+            </div>
+          )}
 
-                    <div className="flex justify-end">
-                      <span
-                        onClick={() => {
-                          setSelectedData(d);
-                          setOpenModal(true);
-                        }}
-                        className="inline-flex items-center gap-1 text-blue-600 text-sm font-medium cursor-pointer"
-                      >
-                        Lihat Detail
-                        <ArrowRight size={16} />
-                      </span>
-                    </div>
+          {/* EMPTY STATE */}
+          {!loading &&
+            !loadingCategory &&
+            !isSwitchingCategory &&
+            filteredData.length === 0 && (
+              <div className="col-span-full py-16 text-center text-gray-500">
+                Destinasi tidak tersedia
+              </div>
+            )}
+
+          {/* DATA READY */}
+          {!loading &&
+            !loadingCategory &&
+            !isSwitchingCategory &&
+            filteredData.length > 0 &&
+            filteredData.map((d) => (
+              <div
+                key={d.id}
+                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden"
+              >
+                <div className="h-48">
+                  <img
+                    src={d.imageUrl || "/images/default.jpg"}
+                    alt={d.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="p-5 text-left">
+                  <h3 className="font-semibold text-lg mb-1">{d.name}</h3>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {d.region?.name ?? "Lokasi tidak diketahui"}
+                  </p>
+
+                  <div className="flex justify-end">
+                    <span
+                      onClick={() => {
+                        setSelectedData(d);
+                        setOpenModal(true);
+                      }}
+                      className="inline-flex items-center gap-1 text-blue-600 text-sm font-medium cursor-pointer"
+                    >
+                      Lihat Detail
+                      <ArrowRight size={16} />
+                    </span>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
         </div>
       </div>
 
