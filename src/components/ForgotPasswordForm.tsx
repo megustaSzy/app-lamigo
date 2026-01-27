@@ -46,18 +46,15 @@ export function ForgotPasswordForm() {
     }
 
     try {
-      const response = await fetch(
-        `${apiUrl}/api/auth/forgot-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: data.email.trim().toLowerCase(),
-          }),
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email.trim().toLowerCase(),
+        }),
+      });
 
       if (!response.ok) {
         const result: ApiErrorResponse = await response.json();
@@ -94,15 +91,13 @@ export function ForgotPasswordForm() {
             <Alert className="bg-blue-50 border-blue-200">
               <AlertDescription>
                 Periksa inbox email{" "}
-                <span className="font-semibold">
-                  {getValues("email")}
-                </span>
+                <span className="font-semibold">{getValues("email")}</span>
               </AlertDescription>
             </Alert>
 
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               onClick={() => setIsSuccess(false)}
             >
               Kirim Ulang Email
@@ -125,9 +120,7 @@ export function ForgotPasswordForm() {
     <div className="w-full max-w-md mx-auto">
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Lupa Password?
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold">Lupa Password?</CardTitle>
           <CardDescription>
             Masukkan email untuk menerima link reset password
           </CardDescription>
