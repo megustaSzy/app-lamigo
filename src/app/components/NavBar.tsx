@@ -268,58 +268,7 @@ export default function NavBar() {
         {/* RIGHT SIDE */}
         <div className="hidden md:flex gap-4 ml-auto items-center">
           {/* LANGUAGE */}
-          <div className="relative" ref={langRef}>
-            <button
-              onClick={() => setLangOpen((prev) => !prev)}
-              className={`flex items-center gap-1 px-3 py-1 border rounded-md text-sm ${textColor} cursor-pointer`}
-            >
-              {language.toUpperCase()}
-              <ChevronDown
-                size={16}
-                className={`transition-transform duration-200 cursor-pointer ${
-                  langOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            {langOpen && (
-              <div
-                className={`absolute right-0 mt-1 w-36 bg-white shadow rounded-md overflow-hidden z-50 ${poppins.className}`}
-              >
-                <button
-                  onClick={() => {
-                    setLanguage("id");
-                    localStorage.setItem("language", "id");
-                    setLangOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-4 py-2 
-                 font-normal text-gray-700
-                 hover:bg-blue-50 hover:text-blue-600
-                 active:bg-blue-100
-                 transition-colors duration-150"
-                >
-                  <span className="text-lg">🇮🇩</span>
-                  <span>Indonesia</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setLanguage("en");
-                    localStorage.setItem("language", "en");
-                    setLangOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-4 py-2
-                 font-normal text-gray-700
-                 hover:bg-blue-50 hover:text-blue-600
-                 active:bg-blue-100
-                 transition-colors duration-150"
-                >
-                  <span className="text-lg">🇺🇸</span>
-                  <span>English</span>
-                </button>
-              </div>
-            )}
-          </div>
+          <div className="relative" ref={langRef}></div>
           {/* PROFILE */}
           <div className="relative" ref={profileRef}>
             {isLoggedIn ? (

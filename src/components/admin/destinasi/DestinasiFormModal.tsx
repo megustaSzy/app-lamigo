@@ -33,8 +33,26 @@ import {
   Tag,
   MapPinned,
   Banknote,
+  ChevronsUpDown,
+  Check,
 } from "lucide-react";
 import { PaginatedResponse } from "@/types/common";
+
+import { RegionAllItem, RegionAllResponse } from "@/types/ChardRegion";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 type SimpleOption = {
   id: number;
@@ -71,17 +89,24 @@ export default function DestinasiFormModal({
 
   const [loading, setLoading] = useState(false);
 
+  const [openRegion, setOpenRegion] = useState(false);
+
   useEffect(() => {
     if (!open) return;
 
     async function fetchMeta() {
       const [catRes, regRes] = await Promise.all([
         apiFetch("/api/category") as Promise<PaginatedResponse<SimpleOption>>,
-        apiFetch("/api/region") as Promise<PaginatedResponse<SimpleOption>>,
+        apiFetch("/api/region/all") as Promise<RegionAllResponse>,
       ]);
 
       setCategories(catRes.data.items);
-      setRegions(regRes.data.items);
+      setRegions(
+        regRes.data.map((r) => ({
+          id: r.id,
+          name: r.name,
+        })),
+      );
     }
 
     fetchMeta();
@@ -235,26 +260,82 @@ export default function DestinasiFormModal({
                   htmlFor="region"
                   className="text-sm font-medium flex items-center gap-2"
                 >
-                  <MapPinned className="h-3.5 w-3.5" />
+                  <MapPinned className="h-4 w-4 text-muted-foreground" />
                   Kabupaten
                 </Label>
-                <Select
-                  value={regionId ? String(regionId) : ""}
-                  onValueChange={(val) => setRegionId(Number(val))}
-                  disabled={loading}
-                  required
-                >
-                  <SelectTrigger className="rounded-lg">
-                    <SelectValue placeholder="Pilih kabupaten" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {regions.map((r) => (
-                      <SelectItem key={r.id} value={String(r.id)}>
-                        {r.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+
+                <Popover open={openRegion} onOpenChange={setOpenRegion}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openRegion}
+                      className="w-full justify-between rounded-lg h-10 px-3 font-normal hover:bg-accent"
+                      disabled={loading}
+                    >
+                      <span
+                        className={cn(
+                          "truncate",
+                          !regionId && "text-muted-foreground",
+                        )}
+                      >
+                        {regionId
+                          ? regions.find((r) => r.id === regionId)?.name
+                          : "Pilih kabupaten"}
+                      </span>
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+
+                  <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0"
+                    align="start"
+                  >
+                    <Command>
+                      <CommandInput
+                        placeholder="Cari kabupaten..."
+                        className="h-9"
+                      />
+                      <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+                        Kabupaten tidak ditemukan
+                      </CommandEmpty>
+
+                      <CommandList className="max-h-[300px]">
+                        <CommandGroup>
+                          {regions.map((r) => (
+                            <CommandItem
+                              key={r.id}
+                              value={r.name}
+                              onSelect={() => {
+                                setRegionId(r.id);
+                                setOpenRegion(false);
+                              }}
+                              className="
+    cursor-pointer
+    rounded-md
+    px-3 py-2
+    data-[selected=true]:bg-accent
+    data-[selected=true]:text-accent-foreground
+    data-[selected=true]:font-medium
+    hover:bg-accent/70
+  "
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4 transition-opacity",
+                                  regionId === r.id
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                              <span className="truncate">{r.name}</span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -269,7 +350,7 @@ export default function DestinasiFormModal({
                   value={formatRupiah(price)}
                   onChange={(e) =>
                     setPrice(
-                      unformatRupiah(e.target.value).replace(/[^\d]/g, "")
+                      unformatRupiah(e.target.value).replace(/[^\d]/g, ""),
                     )
                   }
                   placeholder="Rp 50.000"
