@@ -42,7 +42,7 @@ export function LoginRequiredPopup({
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1 rounded-xl"
+            className="flex-1 rounded-xl cursor-pointer"
           >
             Batal
           </Button>
@@ -51,7 +51,7 @@ export function LoginRequiredPopup({
             onClick={() =>
               router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`)
             }
-            className="flex-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 justify-center"
+            className="flex-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 justify-center cursor-pointer"
           >
             <LogIn size={16} />
             Login

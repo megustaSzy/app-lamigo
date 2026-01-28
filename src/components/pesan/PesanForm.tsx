@@ -131,7 +131,7 @@ export default function PesanForm({
               setErrors((prev) => ({ ...prev, pickupLocationId: undefined }));
             }}
           >
-            <SelectTrigger className="h-7 border-0 p-0 text-xs font-medium text-neutral-500 focus:ring-0 focus:ring-offset-0">
+            <SelectTrigger className="h-7 border-0 p-0 text-xs font-medium text-neutral-500 focus:ring-0 focus:ring-offset-0 cursor-pointer">
               <SelectValue placeholder="Pilih Lokasi" />
             </SelectTrigger>
             <SelectContent>
@@ -139,7 +139,7 @@ export default function PesanForm({
                 <SelectItem
                   key={loc.id}
                   value={loc.id.toString()}
-                  className="text-sm"
+                  className="text-sm cursor-pointer"
                 >
                   {loc.name}
                 </SelectItem>
@@ -158,17 +158,17 @@ export default function PesanForm({
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
-                className="h-7 w-full justify-start px-0 py-0 font-medium text-xs text-neutral-700 hover:bg-transparent hover:text-blue-600"
+                className="h-7 w-full justify-start px-0 py-0 font-medium text-xs text-neutral-700 hover:bg-transparent hover:text-blue-600 cursor-pointer"
               >
                 {date ? (
                   formatDate(date)
                 ) : (
-                  <span className="text-neutral-500">Pilih tanggal</span>
+                  <span className="text-neutral-500 ">Pilih tanggal</span>
                 )}
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="w-auto p-3 rounded-2xl shadow-lg border"
+              className="w-auto p-3 rounded-2xl shadow-lg border "
               align="start"
             >
               <CalendarShadcn
@@ -207,7 +207,7 @@ export default function PesanForm({
                 className="h-7 w-full justify-start px-0 py-0 font-medium text-xs text-neutral-700 hover:bg-transparent hover:text-blue-600"
               >
                 {departTime || (
-                  <span className="text-neutral-500">Pilih jam</span>
+                  <span className="text-neutral-500 cursor-pointer">Pilih jam</span>
                 )}
               </Button>
             </PopoverTrigger>
@@ -221,7 +221,7 @@ export default function PesanForm({
                       setOpenDepart(false);
                       setErrors((prev) => ({ ...prev, departTime: undefined }));
                     }}
-                    className={`rounded-lg py-2 text-xs font-semibold transition-all ${
+                    className={`rounded-lg py-2 text-xs font-semibold transition-all cursor-pointer ${
                       departTime === time
                         ? "bg-blue-600 text-white shadow-md scale-105"
                         : "border border-neutral-200 text-neutral-600 hover:bg-blue-50 hover:border-blue-400"
@@ -246,7 +246,7 @@ export default function PesanForm({
                 className="h-7 w-full justify-start px-0 py-0 font-medium text-xs text-neutral-700 hover:bg-transparent hover:text-blue-600"
               >
                 {returnTime || (
-                  <span className="text-neutral-500">Pilih jam</span>
+                  <span className="text-neutral-500 cursor-pointer">Pilih jam</span>
                 )}
               </Button>
             </PopoverTrigger>
@@ -260,7 +260,7 @@ export default function PesanForm({
                       setOpenReturn(false);
                       setErrors((prev) => ({ ...prev, returnTime: undefined }));
                     }}
-                    className={`rounded-lg py-2 text-xs font-semibold transition-all ${
+                    className={`rounded-lg py-2 text-xs font-semibold transition-all cursor-pointer ${
                       returnTime === time
                         ? "bg-blue-600 text-white shadow-md scale-105"
                         : "border border-neutral-200 text-neutral-600 hover:bg-blue-50 hover:border-blue-400"
@@ -281,7 +281,7 @@ export default function PesanForm({
           <div className="flex items-center gap-4">
             <button
               onClick={() => setQuantity((p) => Math.max(1, p - 1))}
-              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100 text-sm font-bold transition"
+              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100 text-sm font-bold transition cursor-pointer"
             >
               −
             </button>
@@ -290,7 +290,7 @@ export default function PesanForm({
             </span>
             <button
               onClick={() => setQuantity((p) => Math.min(16, p + 1))}
-              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100 text-sm font-bold transition"
+              className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-blue-100 text-sm font-bold transition cursor-pointer"
             >
               +
             </button>
@@ -301,7 +301,7 @@ export default function PesanForm({
       {/* SUBMIT */}
       <button
         onClick={handleSubmit}
-        className="w-full flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3 px-5 rounded-2xl text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+        className="w-full flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3 px-5 rounded-2xl text-sm font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
       >
         <span>Pesan</span>
         <span>IDR {estimasiTotal.toLocaleString("id-ID")}</span>

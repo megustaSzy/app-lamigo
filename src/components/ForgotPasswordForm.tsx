@@ -164,7 +164,7 @@ export function ForgotPasswordForm() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -177,7 +177,7 @@ export function ForgotPasswordForm() {
             </Button>
 
             <Link href="/login">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full cursor-pointer">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Kembali ke Login
               </Button>

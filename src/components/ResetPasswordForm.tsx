@@ -190,7 +190,7 @@ export default function ResetPasswordForm() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-all duration-200"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-all duration-200 cursor-pointer"
               >
                 {isSubmitting ? "Menyimpan..." : "Simpan Password Baru"}
               </Button>
