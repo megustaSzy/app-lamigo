@@ -190,7 +190,7 @@ export default function NavBar() {
   text-sm
   transition-all duration-300
   ${
-    scrolled
+    scrolled || open
       ? "bg-white shadow-md border-b border-gray-200"
       : "bg-white/2 backdrop-blur-[1px] border-b border-white/2"
   } 
@@ -198,12 +198,12 @@ export default function NavBar() {
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center h-16">
         {/* LOGO */}
-        <div className="relative w-10 h-10">
+        <div className="relative w-8 h-8 md:w-10 md:h-10">
           <Image
             src="/images/logo.png"
             alt="Logo"
             fill
-            sizes="(max-width: 768px) 30px, 40px"
+            sizes="(max-width: 768px) 32px, 40px"
             style={{ objectFit: "contain" }}
             priority
           />
@@ -348,10 +348,11 @@ export default function NavBar() {
         {/* BURGER MENU */}
         <button
           onClick={() => setOpen((p) => !p)}
-          className="md:hidden ml-auto p-2"
+          className="md:hidden ml-auto p-2 focus:outline-none transition-colors duration-200"
+          aria-label="Toggle menu"
         >
           {open ? (
-            <X className={scrolled ? "text-gray-800" : "text-white"} />
+            <X className="text-gray-800" />
           ) : (
             <Menu className={scrolled ? "text-gray-800" : "text-white"} />
           )}
@@ -360,19 +361,25 @@ export default function NavBar() {
 
       {/* MOBILE MENU */}
       <div
-        className={`md:hidden overflow-hidden transition-all ${
-          open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          open
+            ? "max-h-[500px] opacity-100 border-t"
+            : "max-h-0 opacity-0 border-t-0"
         }`}
       >
-        <div className="bg-white border-t px-4 py-4 text-gray-800">
-          <nav className="flex flex-col gap-4 text-center">
+        <div className="bg-white px-4 py-6 text-gray-800 shadow-inner">
+          <nav className="flex flex-col gap-1 text-center">
             <Link
               href="/"
               onClick={() => {
                 setActiveMenu("home");
                 setOpen(false);
               }}
-              className={`${activeMenu === "home" ? "text-blue-600" : ""}`}
+              className={`py-3 px-4 rounded-lg transition-colors ${
+                activeMenu === "home"
+                  ? "text-blue-600 bg-blue-50 font-semibold"
+                  : "active:bg-gray-50"
+              }`}
             >
               {translations.home}
             </Link>
@@ -382,7 +389,11 @@ export default function NavBar() {
                 setActiveMenu("about");
                 setOpen(false);
               }}
-              className={`${activeMenu === "about" ? "text-blue-600" : ""}`}
+              className={`py-3 px-4 rounded-lg transition-colors ${
+                activeMenu === "about"
+                  ? "text-blue-600 bg-blue-50 font-semibold"
+                  : "active:bg-gray-50"
+              }`}
             >
               {translations.about}
             </Link>
@@ -392,7 +403,11 @@ export default function NavBar() {
                 setActiveMenu("tour");
                 setOpen(false);
               }}
-              className={`${activeMenu === "tour" ? "text-blue-600" : ""}`}
+              className={`py-3 px-4 rounded-lg transition-colors ${
+                activeMenu === "tour"
+                  ? "text-blue-600 bg-blue-50 font-semibold"
+                  : "active:bg-gray-50"
+              }`}
             >
               {translations.tour}
             </Link>
@@ -402,60 +417,71 @@ export default function NavBar() {
                 setActiveMenu("ticket");
                 setOpen(false);
               }}
-              className={`${activeMenu === "ticket" ? "text-blue-600" : ""}`}
+              className={`py-3 px-4 rounded-lg transition-colors ${
+                activeMenu === "ticket"
+                  ? "text-blue-600 bg-blue-50 font-semibold"
+                  : "active:bg-gray-50"
+              }`}
             >
               {translations.ticket}
             </Link>
             <button
               onClick={() => {
                 setActiveMenu("contact");
+                setOpen(false);
                 window.scrollTo({
                   top: document.body.scrollHeight,
                   behavior: "smooth",
                 });
               }}
-              className={`${activeMenu === "contact" ? "text-blue-600" : ""}`}
+              className={`py-3 px-4 rounded-lg text-center transition-colors ${
+                activeMenu === "contact"
+                  ? "text-blue-600 bg-blue-50 font-semibold"
+                  : "active:bg-gray-50"
+              }`}
             >
               {translations.contact}
             </button>
 
-            {isLoggedIn ? (
-              <>
-                <Link
-                  href="/profil"
-                  onClick={() => setOpen(false)}
-                  className="py-2"
-                >
-                  {translations.editProfile}
-                </Link>
-                <button
-                  onClick={() => {
-                    setLogoutConfirm(true);
-                    setOpen(false);
-                  }}
-                  className="py-2 bg-red-500 text-white rounded-md"
-                >
-                  {translations.logout}
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  onClick={() => setOpen(false)}
-                  className="py-2 bg-blue-600 text-white rounded-md"
-                >
-                  {translations.login}
-                </Link>
-                <Link
-                  href="/signup"
-                  onClick={() => setOpen(false)}
-                  className="py-2 border border-blue-600 text-blue-600 rounded-md"
-                >
-                  {translations.signup}
-                </Link>
-              </>
-            )}
+            <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-3">
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/profil"
+                    onClick={() => setOpen(false)}
+                    className="py-3 px-4 text-sm font-medium hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    {translations.editProfile}
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setLogoutConfirm(true);
+                      setOpen(false);
+                    }}
+                    className="py-3 px-4 bg-red-500 text-white rounded-xl font-medium shadow-sm active:scale-95 transition-all"
+                  >
+                    {translations.logout}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="py-3 px-4 bg-blue-600 text-white rounded-xl font-medium shadow-sm active:scale-95 transition-all text-center"
+                  >
+                    {translations.login}
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setOpen(false)}
+                    className="py-3 px-4 border border-blue-600 text-blue-600 rounded-xl font-medium active:scale-95 transition-all text-center"
+                  >
+                    {translations.signup}
+                  </Link>
+                </>
+              )}
+            </div>
           </nav>
         </div>
       </div>
