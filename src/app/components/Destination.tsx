@@ -105,18 +105,21 @@ export default function DestinasiSection() {
 
   return (
     <section className="relative w-full bg-linear-to-b from-[#a7c8e7] to-[#f2f6f9]">
-      <div className="max-w-6xl mx-auto px-4 pt-36 pb-10 text-center">
-        <h2 className="text-3xl md:text-4xl font-extrabold mb-8 text-gray-800">
+      <div className="max-w-6xl mx-auto px-4 pt-48 md:pt-36 pb-10 text-center">
+        <h2 className="text-2xl md:text-4xl font-extrabold mb-6 md:mb-8 text-gray-800">
           Tujuan Wisata Favorit
         </h2>
 
         {/* =========================
            CATEGORY
         ========================= */}
-        <div className="flex justify-center flex-wrap gap-4 mb-12">
+        <div className="flex justify-center flex-wrap gap-2 md:gap-4 mb-8 md:mb-12">
           {loadingCategory
             ? Array.from({ length: CATEGORY_SKELETON_COUNT }).map((_, i) => (
-                <Skeleton key={i} className="h-9 w-24 rounded-full" />
+                <Skeleton
+                  key={i}
+                  className="h-8 md:h-9 w-20 md:w-24 rounded-full"
+                />
               ))
             : categories.map((cat) => (
                 <button
@@ -128,10 +131,10 @@ export default function DestinasiSection() {
                     // UX feedback kecil, TANPA sentuh fetch
                     setTimeout(() => setIsSwitchingCategory(false), 300);
                   }}
-                  className={`px-6 py-2 rounded-full border text-sm font-medium ${
+                  className={`px-4 py-1.5 md:px-6 md:py-2 rounded-full border text-xs md:text-sm font-medium transition-all ${
                     activeCategory === cat.name
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-blue-50"
+                      ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                      : "bg-white text-gray-700 hover:bg-blue-50 border-gray-200"
                   }`}
                 >
                   {cat.name}
@@ -142,7 +145,7 @@ export default function DestinasiSection() {
         {/* =========================
            DESTINATION GRID
         ========================= */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {/* FIRST LOAD → SKELETON */}
           {(loading || loadingCategory) &&
             Array.from({ length: DESTINATION_SKELETON_COUNT }).map((_, i) => (
@@ -151,7 +154,7 @@ export default function DestinasiSection() {
 
           {/* SWITCH CATEGORY → TEXT LOADER */}
           {!loading && !loadingCategory && isSwitchingCategory && (
-            <div className="col-span-full py-12 text-center text-gray-500">
+            <div className="col-span-full py-12 text-center text-gray-500 text-sm">
               Memuat destinasi…
             </div>
           )}
@@ -161,7 +164,7 @@ export default function DestinasiSection() {
             !loadingCategory &&
             !isSwitchingCategory &&
             filteredData.length === 0 && (
-              <div className="col-span-full py-16 text-center text-gray-500">
+              <div className="col-span-full py-16 text-center text-gray-500 text-sm">
                 Destinasi tidak tersedia
               </div>
             )}
@@ -174,9 +177,9 @@ export default function DestinasiSection() {
             filteredData.map((d) => (
               <div
                 key={d.id}
-                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden"
+                className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
               >
-                <div className="h-48">
+                <div className="h-40 md:h-48">
                   <img
                     src={d.imageUrl || "/images/default.jpg"}
                     alt={d.name}

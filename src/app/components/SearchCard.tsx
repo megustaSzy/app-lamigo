@@ -138,20 +138,22 @@ export default function SearchCard() {
   };
 
   return (
-    <div className="bg-white rounded-[22px] p-6 max-w-5xl mx-auto border shadow-sm">
+    <div className="bg-white rounded-[22px] p-4 md:p-6 max-w-5xl mx-auto border shadow-sm">
       {/* HEADER */}
       <div className="border-b pb-3">
-        <p className="text-xs font-medium text-gray-500 mb-1 block">
+        <p className="text-[10px] md:text-xs font-medium text-gray-500 mb-0.5 block">
           Lokasi Kamu
         </p>
-        <h2 className="text-xl font-semibold text-gray-800">{location}</h2>
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800 line-clamp-1">
+          {location}
+        </h2>
       </div>
 
       {/* FORM */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-4 items-end">
         {/* KATEGORI */}
         <div className="md:col-span-2">
-          <label className="text-xs font-medium text-gray-500 mb-1 block pl-2">
+          <label className="text-[10px] md:text-xs font-medium text-gray-500 mb-1 block pl-2">
             Kategori Wisata
           </label>
           <Popover open={openCategory} onOpenChange={setOpenCategory}>
@@ -159,10 +161,10 @@ export default function SearchCard() {
               <Button
                 variant="outline"
                 role="combobox"
-                className="w-full h-11 justify-between rounded-full cursor-pointer"
+                className="w-full h-10 md:h-11 justify-between rounded-full cursor-pointer"
               >
-                <div className="flex items-center gap-2 text-sm font-normal text-gray-600">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-xs md:text-sm font-normal text-gray-600">
+                  <MapPin className="w-3.5 h-3.5 md:w-4 h-4 text-gray-400" />
                   {selectedCategory?.name || "Pilih Kategori"}
                 </div>
                 <ChevronsUpDown className="w-4 h-4 opacity-50" />
@@ -200,7 +202,7 @@ export default function SearchCard() {
 
         {/* DAERAH */}
         <div className="md:col-span-2">
-          <label className="text-xs font-medium text-gray-500 mb-1 block pl-2">
+          <label className="text-[10px] md:text-xs font-medium text-gray-500 mb-1 block pl-2">
             Daerah
           </label>
           <Popover open={openArea} onOpenChange={setOpenArea}>
@@ -208,10 +210,10 @@ export default function SearchCard() {
               <Button
                 variant="outline"
                 role="combobox"
-                className="w-full h-11 justify-between rounded-full cursor-pointer"
+                className="w-full h-10 md:h-11 justify-between rounded-full cursor-pointer"
               >
-                <div className="flex items-center gap-2 text-sm font-normal text-gray-600">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-xs md:text-sm font-normal text-gray-600">
+                  <MapPin className="w-3.5 h-3.5 md:w-4 h-4 text-gray-400" />
                   {selectedArea?.nama || "Pilih Daerah"}
                 </div>
                 <ChevronsUpDown className="w-4 h-4 opacity-50" />
@@ -250,7 +252,7 @@ export default function SearchCard() {
         {/* BUTTON */}
         <Button
           onClick={handleSearch}
-          className="h-11 rounded-full bg-blue-500 hover:bg-blue-600 cursor-pointer"
+          className="h-10 md:h-11 rounded-full bg-blue-500 hover:bg-blue-600 cursor-pointer text-sm md:text-base"
         >
           Search
         </Button>
@@ -258,7 +260,9 @@ export default function SearchCard() {
 
       {/* ERROR */}
       {errorMessage && (
-        <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+        <p className="text-red-500 text-[10px] md:text-sm mt-2">
+          {errorMessage}
+        </p>
       )}
     </div>
   );
