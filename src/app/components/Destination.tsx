@@ -9,9 +9,6 @@ import DestinationModal from "./DestinationModal";
 import { ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-/* =========================
-   DESTINATION SKELETON
-========================= */
 function DestinationSkeleton() {
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden">
@@ -43,9 +40,6 @@ export default function DestinasiSection() {
     null,
   );
 
-  /* =========================
-     LOAD CATEGORY
-  ========================= */
   const loadCategories = useCallback(async () => {
     try {
       const res = await apiFetch<ApiCategoryResponse>("/api/category");
@@ -57,9 +51,6 @@ export default function DestinasiSection() {
     }
   }, []);
 
-  /* =========================
-     LOAD DESTINATIONS
-  ========================= */
   const loadDestinations = useCallback(async () => {
     setLoading(true);
     try {
@@ -131,7 +122,7 @@ export default function DestinasiSection() {
                     // UX feedback kecil, TANPA sentuh fetch
                     setTimeout(() => setIsSwitchingCategory(false), 300);
                   }}
-                  className={`px-4 py-1.5 md:px-6 md:py-2 rounded-full border text-xs md:text-sm font-medium transition-all ${
+                  className={`px-4 py-1.5 md:px-6 md:py-2 rounded-full border text-xs md:text-sm font-medium transition-all cursor-pointer ${
                     activeCategory === cat.name
                       ? "bg-blue-600 text-white border-blue-600 shadow-md"
                       : "bg-white text-gray-700 hover:bg-blue-50 border-gray-200"

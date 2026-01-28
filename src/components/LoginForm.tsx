@@ -333,7 +333,7 @@ export function LoginForm({
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
                   >
                     {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
@@ -357,7 +357,7 @@ export function LoginForm({
               {/* Login Button */}
               <Button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
                 disabled={loading}
               >
                 {loading ? "Sedang masuk..." : "Login"}
@@ -376,7 +376,7 @@ export function LoginForm({
                 variant="outline"
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full flex gap-2"
+                className="w-full flex gap-2 cursor-pointer"
               >
                 <FcGoogle size={20} />
                 Login dengan Google

@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
@@ -28,6 +29,7 @@ export default function SignupForm(props: React.ComponentProps<typeof Card>) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -136,18 +138,35 @@ export default function SignupForm(props: React.ComponentProps<typeof Card>) {
             </div>
 
             {/* Password Field */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register("password")}
-              />
+
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  {...register("password")}
+                  className={
+                    errors.password
+                      ? "border-red-500 focus-visible:ring-red-500"
+                      : ""
+                  }
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
+
               {errors.password && (
-                <p className="text-xs text-red-500 mt-1">
+                <p className="text-xs text-red-500">
                   {errors.password.message}
                 </p>
               )}
@@ -174,7 +193,7 @@ export default function SignupForm(props: React.ComponentProps<typeof Card>) {
             {/* Create Account Button */}
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-4 cursor-pointer"
               disabled={loading}
             >
               {loading ? "Membuat akun..." : "Create Account"}
@@ -192,7 +211,7 @@ export default function SignupForm(props: React.ComponentProps<typeof Card>) {
             <Button
               variant="outline"
               type="button"
-              className="w-full flex gap-2"
+              className="w-full flex gap-2 cursor-pointer"
             >
               <FcGoogle size={20} />
               Sign up with Google
