@@ -362,7 +362,7 @@ export default function TiketPage() {
                           <Link href={`/payment/${encodedId}`}>
                             <Button
                               size="sm"
-                              className="rounded-xl bg-blue-600 hover:bg-blue-700"
+                              className="rounded-xl bg-blue-600 hover:bg-blue-700 cursor-pointer"
                             >
                               Bayar
                             </Button>
@@ -374,7 +374,7 @@ export default function TiketPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="rounded-xl"
+                              className="rounded-xl cursor-pointer"
                             >
                               Lihat
                             </Button>
