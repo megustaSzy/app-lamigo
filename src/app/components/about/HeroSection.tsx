@@ -54,20 +54,21 @@ export default function HeroSection() {
 
       {/* Text Content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
-        {loading ? (
-          <>
-            <h1 className="text-3xl font-semibold mb-2">Loading...</h1>
-            <p className="max-w-xl text-sm opacity-90">
-              Sedang mengambil data…
-            </p>
-          </>
-        ) : (
-          <>
-            <h2 className="text-4xl font-bold mb-6">About</h2>
+        <h2
+          className={`text-4xl font-bold mb-6 transition-all duration-500
+      ${loading ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}
+    `}
+        >
+          About
+        </h2>
 
-            <p className="max-w-xl text-sm opacity-90">{data?.data.title}</p>
-          </>
-        )}
+        <p
+          className={`max-w-xl text-sm opacity-90 transition-all duration-700 delay-100
+      ${loading ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}
+    `}
+        >
+          {data?.data.title}
+        </p>
       </div>
     </div>
   );
